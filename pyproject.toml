@@ -9,6 +9,7 @@ packages = [{include = "gutimotos_api", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.12"
 django = "^5.1.4"
+djangorestframework = "^3.15.2"
 
 
 [tool.poetry.group.dev.dependencies]

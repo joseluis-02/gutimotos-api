@@ -25,6 +25,7 @@ LOCAL_APPS = (
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (
     # Aquí define aplicaciones de otros desarrolladores
+    'rest_framework',
 )
 # Definición general de aplicaciones
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
