@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gutimotos-api"
+version = "0.1.0"
+description = ""
+authors = ["joseluis-02 <joseluis.c.jlgl@gmail.com>"]
+readme = "README.md"
+packages = [{include = "gutimotos_api", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.4"
+
+
+[tool.poetry.group.dev.dependencies]
+python-decouple = "^3.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

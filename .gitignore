@@ -1,0 +1,22 @@
+# .gitignore
+# Entorno virtual
+.venv/
+poetry.lock
+
+# Archivos compilados de Python
+*.pyc
+__pycache__/
+
+# Configuración específica de la máquina
+*.env
+
+# Archivos estáticos y de medios generados
+
+# Archivos de migraciones
+**/migrations/*.py[cod]
+
+# Archivos de bases de datos locales
+db.sqlite3
+
+# Configuraciones de visual studio code
+.vscode
