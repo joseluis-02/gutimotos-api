@@ -21,6 +21,8 @@ DJANGO_APPS = (
 # Aplicaciones locales o creados por ti
 LOCAL_APPS = (
     # Aquí instala tus aplicaciones
+    'apps.persons',
+    'apps.users',
 )
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (
@@ -28,7 +30,7 @@ THIRD_PARTY_APPS = (
     'rest_framework',
 )
 # Definición general de aplicaciones
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS+THIRD_PARTY_APPS+LOCAL_APPS
 
 # Middlewares del proyecto
 MIDDLEWARE = [
@@ -81,6 +83,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+# Uso de User Personalizado
+AUTH_USER_MODEL = 'users.User'
 
 # Definición del tamaño del id auto_increment para todos lo modelos dentro del proyecto
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
