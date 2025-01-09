@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # Decouple 
-from decouple import config, Csv
+from decouple import config
 
 # Obtenemos base del proyecto es decir la carpeta raíz.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -21,6 +21,8 @@ DJANGO_APPS = (
 # Aplicaciones locales o creados por ti
 LOCAL_APPS = (
     # Aquí instala tus aplicaciones
+    # Factus
+    'apps.factus',
 )
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (
@@ -48,7 +50,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
