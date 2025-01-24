@@ -65,16 +65,16 @@ class NaturalPerson(BasePerson):
         default='',
         verbose_name='Género de la persona'
     )
+    # Sobreescribimos el atributo de la superclase si es necesario
+    '''
     document_code:str = models.CharField(
-        max_length=30,
-        blank=True,
-        default='',
-        verbose_name='Codigo de documento'
-    )
+        max_length=20,
+    '''
     document_complement:str = models.CharField(
         max_length=3,
         blank=True,
-        default='',        verbose_name='Complemento de documento',
+        default='',
+        verbose_name='Complemento de documento',
         help_text='Codigo complemento para documentos duplicados'
     )
     birthdate = models.DateField(
@@ -124,12 +124,13 @@ class LegalPerson(BasePerson):
         blank=True,
         verbose_name='Nombre comercial'
     )
+    # Sobreescribimos de la superclase
     document_code:str = models.CharField(
         max_length=30,
         null=False,
         blank=False,
         unique=True,
-        verbose_name='Código de documento'
+        verbose_name='Código de identificación'
     )
     class Meta:
         constraints = [
