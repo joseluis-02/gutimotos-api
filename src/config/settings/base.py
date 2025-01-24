@@ -23,6 +23,7 @@ LOCAL_APPS = (
     # Aquí instala tus aplicaciones
     'apps.persons',
     'apps.users',
+    'apps.motorcycles',
 )
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (

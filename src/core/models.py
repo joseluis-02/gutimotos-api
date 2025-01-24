@@ -38,12 +38,19 @@ class BasePerson(models.Model):
         # Texto de ayuda en formularios
         help_text='Selecciona el tipo de documento'
     )
+    document_code:str = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        default='',
+        verbose_name='Codigo de documento'
+    )
     class Meta:
         abstract = True
 
 '''
-    Modelo abstracto para indicar que puede pertenecer a una persona natural o juridica
-    pero no ambos ni vacío 
+Modelo abstracto para indicar que puede pertenecer a una persona natural o juridica
+pero no ambos ni vacío 
 '''
 class NaturalOrLegalPerson(models.Model):
     person_type = models.CharField(
