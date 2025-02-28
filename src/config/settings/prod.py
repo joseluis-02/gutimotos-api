@@ -2,32 +2,39 @@
 import os
 #import os
 from .base import *
+# Función para obtener las variables de entorno
+def get_env_variable(var_name):
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        raise ImproperlyConfigured(f"La variable de entorno {var_name} no está configurada")
+
 # Configuracion de Render
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['gutimotos.com']
 # Configuracion de Render
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME','localhost')
+RENDER_EXTERNAL_HOSTNAME = get_env_variable('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
-        'NAME': config('DB_NAME', default='db.sqlite3'),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default=''),
-        'PORT': config('DB_PORT', default=''),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': get_env_variable('DB_NAME'),
+        'USER': get_env_variable('DB_USER'),
+        'PASSWORD': get_env_variable('DB_PASSWORD'),
+        'HOST': get_env_variable('DB_HOST'),
+        'PORT': get_env_variable('DB_PORT'),
     }
 }
 
 # STATIC FILE
 STATICFILES_DIRS = [BASE_DIR / 'static']
 # Configura tus credenciales de AWS
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_STORAGE_BUCKET_NAME')
 # URL base para los archivos
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_CUSTOM_DOMAIN = False

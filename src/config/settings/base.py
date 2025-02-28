@@ -1,13 +1,29 @@
+# Python
+import json
+# Pathlib
 from pathlib import Path
-
-# Decouple 
-from decouple import config, Csv
+# Django
+from django.core.exceptions import ImproperlyConfigured
+# Decouple Dev
+from decouple import config
 
 # Obtenemos base del proyecto es decir la carpeta raíz.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Lectura de mi archivo secreto
+with open(BASE_DIR/ "secret.json") as f:
+    secret = json.loads(f.read())
+    
+# Función para obtener las variables de mi archivo secreto
+def get_secret(secret_name, secrets=secret):
+    try:
+        return secrets[secret_name]
+    except:
+        msg = "la variable %s no existe" % secret_name
+        raise ImproperlyConfigured(msg)
+
 # Secret key del proyecto
-SECRET_KEY = config('SECRET_KEY', default='inseguro')
+SECRET_KEY = get_secret('SECRET_KEY')
 
 # Aplicaciones de django 
 DJANGO_APPS = (

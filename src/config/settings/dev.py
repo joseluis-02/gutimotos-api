@@ -2,17 +2,17 @@
 from .base import *
 
 # Modo de depuración del proyecto
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = get_secret('DEBUG')
 
 # Base de datos
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
-        'NAME': config('DB_NAME', default='db.sqlite3'),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default=''),
-        'PORT': config('DB_PORT', default=''),
+        'ENGINE': get_secret('DB_ENGINE'),
+        'NAME': get_secret('DB_NAME'),
+        'USER': get_secret('DB_USER'),
+        'PASSWORD': get_secret('DB_PASSWORD'),
+        'HOST': get_secret('DB_HOST'),
+        'PORT': get_secret('DB_PORT'),
     }
 }
 

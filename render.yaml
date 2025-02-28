@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: gutimotos-api-dev
+    env: python
+    buildCommand: ./build.sh  # Se ejecutará el script de construcción
+    startCommand: gunicorn src.config.wsgi:application --workers 3 --preload  # Comando de inicio
