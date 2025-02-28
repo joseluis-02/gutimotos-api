@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Exit on error
+set -o errexit
+echo "Entra al bash"
 echo "Cargando el proyecto..."
 # Actualizar el sistema y asegurarse de que pip está actualizado
 apt-get update
