@@ -1,13 +1,21 @@
 #!/bin/bash
-echo "Iniciando el proceso de construcción..."
-# Instalar las dependencias de producción
-poetry install --no-dev
-echo "Dependencias instaladas."
-# Realizar migraciones de la base de datos
-python src/manage.py makemigrations --noinput
-python src/manage.py migrate --noinput
-echo "Migraciones realizadas."
-# Compilar activos estáticos (si aplica)
-python src/manage.py collectstatic --noinput
+echo "Cargando el proyecto..."
+# Actualizar el sistema y asegurarse de que pip está actualizado
+apt-get update
+apt-get install -y python3-pip python3-dev libpq-dev
 
-# Otros comandos si es necesario
+# Instalar Poetry (si no está instalado)
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Agregar Poetry al PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Instalar las dependencias de Poetry
+poetry install
+
+# Migraciones de base de datos (si es necesario)
+poetry run python src/manage.py makemigrations
+poetry run python src/manage.py migrate
+
+# Recolectar archivos estáticos (si es necesario para producción)
+poetry run python src/manage.py collectstatic --noinput
