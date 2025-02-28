@@ -8,7 +8,8 @@ def get_env_variable(var_name):
         return os.environ[var_name]
     except KeyError:
         raise ImproperlyConfigured(f"La variable de entorno {var_name} no está configurada")
-
+# Secret key del proyecto
+SECRET_KEY = get_env_variable('SECRET_KEY')
 # Configuracion de Render
 DEBUG = False
 
