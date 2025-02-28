@@ -5,11 +5,11 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import Q, UniqueConstraint
 # Models local
-from core.models import BasePerson
+from core.models.base_person import BasePerson
 # Managers
 from .managers import NaturalPersonManager
 # Choices local
-from core.choices import PersonGender
+from core.choices.person_gender import PersonGender
 
 # Modelo para Tipo de documento de la persona
 class DocumentType(models.Model):

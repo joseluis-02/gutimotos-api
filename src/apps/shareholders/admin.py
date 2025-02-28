@@ -1,3 +1,6 @@
+# Django
 from django.contrib import admin
-
-# Register your models here.
+# Models
+from .models import Shareholder
+# Registrando al modelo Shareholder=Accionista
+admin.site.register(Shareholder)

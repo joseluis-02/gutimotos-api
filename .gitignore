@@ -20,3 +20,7 @@ db.sqlite3
 
 # Configuraciones de visual studio code
 .vscode
+# No subir archivos estśticos
+media/*
+# Subir configuración del archivo prod
+src/config/settings/prod.py

@@ -1,8 +1,9 @@
 # Django
 from django.contrib import admin
-
 # Models local
-from .models import User
+from .models import User, UserProfile
 
-# Register of model User
+# Registrando al modelo User=Usuario
 admin.site.register(User)
+# Registrando al modelo UserProfile=PerfilUsuario
+admin.site.register(UserProfile)

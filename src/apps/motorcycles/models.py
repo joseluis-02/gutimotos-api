@@ -1,7 +1,66 @@
+# Python
+from uuid import UUID, uuid4
 # Django
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 # django-model-utils
 from model_utils.models import TimeStampedModel
+# Functions
+from .functions import get_image_path
+# Models
+from core.models.natural_or_legal_person import NaturalOrLegalPerson
+# Managers
+from .managers import MotorcyclePhotoManager
+# Choices
+from .choices import Orientation, SideDirection
+
+# Modelo Categoría
+class Category(TimeStampedModel):
+    name:str = models.CharField(
+        max_length=70, 
+        null=False, 
+        verbose_name='Nombre'
+    )
+    father = models.ForeignKey(
+        'self', 
+        on_delete=models.CASCADE,
+        blank=True, null=True,
+        related_name='subcategory', 
+        verbose_name='Padre'
+    )
+    is_active = models.BooleanField(
+        default=True, 
+        verbose_name='Estado'
+    )
+    # META
+    class Meta:
+        verbose_name = 'Categoría'
+        verbose_name_plural = 'Categorías'
+        # Permite registros únicos
+        constraints = [
+            models.UniqueConstraint(fields=['name'], name='unique_category')
+        ]
+    def __str__(self):
+        return self.name
+
+    def get_full_path(self):
+        url = [self.name]
+        father = self.father
+        while father is not None:
+            url.append(father.name)
+            father = father.father
+        return " > ".join(url[::-1])
+
+# Modelo Importador
+class Importer(NaturalOrLegalPerson,TimeStampedModel):
+    is_active:bool = models.BooleanField(
+        default=True,
+        verbose_name='Estado',
+    )
+    class Meta:
+         pass
+    def __str__(self):
+        return f'{self.id}'
 
 # Modelo Color
 class Color(models.Model):
@@ -39,7 +98,7 @@ class Country(models.Model):
         max_length=10,
         null=True,
         unique=True,
-        erbose_name='Abreviado del país'
+        verbose_name='Abreviado del país'
     )
     is_active:bool = models.BooleanField(
         null=False,
@@ -56,7 +115,7 @@ class Country(models.Model):
         return f"{self.name}"
 
 # Modelo Marca
-class Brand(TimeStampedModel):
+class Brand(models.Model):
     name:str = models.CharField(
         max_length=30,
         null=False,
@@ -103,7 +162,7 @@ class MotorcycleType(models.Model):
         ]
         
     def __str__(self):
-        return self.name
+        return self.get_full_path()
 
     def get_full_path(self):
         url = [self.name]
@@ -130,6 +189,13 @@ class TransmissionType(models.Model):
 
 # Modelo Motocicleta
 class Motorcycle(TimeStampedModel):
+    id:UUID = models.UUIDField(
+        primary_key=True,
+        null=False,
+        blank=False,
+        default=uuid4,
+        editable=False
+    )
     code_dim:str = models.CharField(
         max_length=70,
         null=False,
@@ -173,11 +239,12 @@ class Motorcycle(TimeStampedModel):
         blank=False,
         verbose_name='Número cilindrada'
     )
-    declaration_url:str = models.CharField(
-        max_length=250,
+    declaration_code:str = models.CharField(
+        max_length=70,
         null=True,
         blank=True,
-        verbose_name='Declaración en aduana'
+        verbose_name='Declaración code',
+        help_text='Ingrese el código de declaración de QR'
     )
 
     # Llaves foráneas
@@ -244,7 +311,32 @@ class Motorcycle(TimeStampedModel):
         verbose_name='Color',
         help_text='Color de la motocicleta'
     )
-
+    importer = models.ForeignKey(
+        Importer,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        # Acceso desde Category
+        related_name = 'm_importers',
+        # Filtro de consultas inversas
+        related_query_name='m_importer',
+        # Texto de ayuda para el campo
+        help_text='Importador de la motocicleta',
+        verbose_name='Importador',
+    )
+    category = models.ForeignKey(
+        Category,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        # Acceso desde Category
+        related_name = 'm_categories',
+        # Filtro de consultas inversas
+        related_query_name='m_category',
+        # Texto de ayuda para el campo
+        help_text='Categoría de la motocicleta',
+        verbose_name='Categoría',
+    )
     # Manager
 
     class Meta:
@@ -260,3 +352,163 @@ class Motorcycle(TimeStampedModel):
         ]
     def __str__(self) -> str:
         return f'{self.code_dim }'
+
+# Modelo Tipo precio
+class TypePrice(models.Model):
+    name:str = models.CharField(
+        max_length=70,
+        null=False,
+        blank=False,
+    )
+    is_active:bool = models.BooleanField(
+        default=True
+    )
+
+# Modelo Divisa
+class Currency(TimeStampedModel):
+    # Código de la moneda
+    code = models.CharField(
+        max_length=3, 
+        unique=True, 
+        help_text="Código ISO 4217 de la moneda (USD, EUR, CLP, etc.)"
+    )
+    # Nombre completo de la moneda
+    name:str = models.CharField(
+        max_length=30,
+        null=False,
+        blank=False
+    )
+    # Información de conversión
+    conversion_rate = models.DecimalField(
+        max_digits=10, 
+        decimal_places=4,
+        validators=[MinValueValidator(0)],
+        help_text="Tasa de cambio respecto a la moneda base"
+    )
+    is_active:bool = models.BooleanField(
+        default=True
+    )
+
+# Modelo Precio motocicleta
+class MotorcyclePrice(models.Model):
+    amount = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999.99)
+        ]
+    )
+    description:str = models.CharField(
+        max_length=120,
+        null=True,
+        blank=True,
+        verbose_name='Descripción'
+    )
+    start_date = models.DateField(
+        null=False,
+        blank=False
+    )
+    end_date = models.DateField(
+        null=True,
+        blank=True
+    )
+    # LLaves externas
+    motorcycle_type = models.ForeignKey(
+        MotorcycleType,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE, 
+        related_name='mp_motorcycle_types',
+        related_query_name='mp_motorcycle_type',
+        verbose_name='Tipo motocicleta'
+    )
+    type_price = models.ForeignKey(
+        TypePrice,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE, 
+        related_name='mp_type_prices',
+        related_query_name='mp_type_price',
+        verbose_name='Tipo precio'
+    )
+    currency = models.ForeignKey(
+        Currency,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE, 
+        related_name='mp_currencies',
+        related_query_name='mp_currency',
+        verbose_name='Motocicleta'
+    )
+    is_active:bool = models.BooleanField(
+        default=True
+    )
+    def __str__(self):
+        return f'{self.amount} {self.description}'
+
+# Modelo Fotos de la motocicletas
+class MotorcyclePhoto(TimeStampedModel):
+    orientation:str = models.CharField(
+        max_length=1,
+        choices=Orientation.choices,
+        null=False,
+        verbose_name='Orientación de la foto'
+    )
+    side_direction:str = models.CharField(
+        max_length=1,
+        choices=SideDirection.choices,
+        null=False,
+        verbose_name='Dirección de lado'
+    )
+    image_url = models.ImageField(
+        upload_to=get_image_path, 
+        blank=False, 
+        null=False,
+        verbose_name='Foto'
+    )
+    # Foreing key
+    motorcycle_type = models.ForeignKey(
+        MotorcycleType, 
+        on_delete=models.CASCADE,
+        # Acceso desde Motorcycle
+        related_name = 'pm_motorcycle_types',
+        # Filtro de consultas inversas
+        related_query_name='pm_motorcycle_type',
+        # Texto de ayuda para el campo
+        help_text='Tipo de la motocicleta',
+        verbose_name='Tipo',
+    )
+    color = models.ForeignKey(
+        Color, 
+        on_delete=models.CASCADE,
+        # Acceso desde Motorcycle
+        related_name = 'pm_colors',
+        # Filtro de consultas inversas
+        related_query_name='pm_color',
+        # Texto de ayuda para el campo
+        help_text='Color del tipo de la motocicleta',
+        verbose_name='Color',
+    )
+    # Manager
+    objects = MotorcyclePhotoManager()
+    # Class Meta
+    class Meta:
+        verbose_name = 'Foto de motocicleta'
+        verbose_name_plural = 'Fotos de motocicletas'
+        constraints = [
+            # Asegurar solo una imagen por lado (frontal, trasera, etc.) por tipo y color
+            models.UniqueConstraint(
+                fields=['motorcycle_type', 'color', 'side_direction'],
+                condition=~models.Q(side_direction=SideDirection.PORTADA),
+                name='unique_motorcycle_photo_by_type_color_side'
+            ),
+            models.UniqueConstraint(
+                fields=['motorcycle_type', 'color', 'orientation'], 
+                condition=models.Q(side_direction=SideDirection.PORTADA),
+                name='unique_cover_by_orientation'
+            )
+        ]
+    # Funciones y sobreescritura
+    def __str__(self):
+        return f'{self.orientation} {self.side_direction} {self.motorcycle_type}'

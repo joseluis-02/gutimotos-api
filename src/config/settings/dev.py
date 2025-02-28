@@ -18,13 +18,11 @@ DATABASES = {
 
 # Configuración de archivos estáticos del proyecto
 STATIC_URL = 'static/'
+# Configuración de archivos media del proyecto
+MEDIA_URL = '/media/'  # URL para acceder a los archivos media
+MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
 
 # Configuración de correo
-
-# Configuración de AWS
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
 
 # Internationalization y configuracion de zona horario
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

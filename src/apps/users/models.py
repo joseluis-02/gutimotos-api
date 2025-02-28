@@ -1,3 +1,5 @@
+# Python
+from uuid import UUID, uuid4
 # Django
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -13,13 +15,12 @@ from .managers import UserMenager
 
 # Model User
 class User(AbstractBaseUser,PermissionsMixin,TimeStampedModel):
-    natural_person = models.OneToOneField(
-        NaturalPerson,
-        on_delete=models.CASCADE,
-        related_name='user',
+    id:UUID = models.UUIDField(
+        primary_key=True,
         null=False,
         blank=False,
-        verbose_name="Persona asociada"
+        default=uuid4,
+        editable=False
     )
     email:str = models.EmailField(
         max_length=255,
@@ -36,4 +37,28 @@ class User(AbstractBaseUser,PermissionsMixin,TimeStampedModel):
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    
+    # Functions
+    def __str__(self):
+        return f'{self.email}'
+
+# Modelo Perfil de usuario
+class UserProfile(models.Model):
+    natural_person = models.OneToOneField(
+        NaturalPerson,
+        on_delete=models.CASCADE,
+        related_name='up_natural_person',
+        null=False,
+        blank=False,
+        verbose_name="Persona asociada"
+    )
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='up_user',
+        null=False,
+        blank=False,
+        verbose_name="Usuario asociada"
+    )
+    # foto de perfil
+    def __str__(self):
+        return f'{self.natural_person} {self.user}'

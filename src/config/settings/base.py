@@ -24,11 +24,20 @@ LOCAL_APPS = (
     'apps.persons',
     'apps.users',
     'apps.motorcycles',
+    'apps.customers',
+    'apps.employees',
+    'apps.purchases',
+    'apps.sales',
+    'apps.shareholders',
+    'apps.suppliers',
+    'apps.warehouses',
 )
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (
     # Aquí define aplicaciones de otros desarrolladores
     'rest_framework',
+    'storages',
+    'django_filters',
 )
 # Definición general de aplicaciones
 INSTALLED_APPS = DJANGO_APPS+THIRD_PARTY_APPS+LOCAL_APPS
@@ -43,7 +52,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+# Backends de la API
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}
 # Archivo root de las urls del proyecto
 ROOT_URLCONF = 'config.urls'
 
@@ -51,8 +63,8 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'templates'], # Plantillas globales
+        'APP_DIRS': True, # Habilita la búsqueda de templates dentro de las apps
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

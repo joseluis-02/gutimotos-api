@@ -33,3 +33,6 @@ class Shareholder(TimeStampedModel):
     class Meta:
         verbose_name = 'Accionista'
         verbose_name_plural = 'Accionistas'
+    # Functions
+    def __str__(self):
+        return f'{self.natural_person} {self.motorcycle}'
