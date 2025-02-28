@@ -4,4 +4,4 @@ services:
     env: python
     buildCommand: "./build.sh"  # Se ejecutará el script de construcción
     startCommand: "poetry run gunicorn src.config.wsgi:application --workers 3 --preload"  # Comando de inicio
-    pythonVersion: "3.12" # Versión de Python
+    pythonVersion: "3.11" # Versión de Python
