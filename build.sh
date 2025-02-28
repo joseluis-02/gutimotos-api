@@ -3,18 +3,14 @@
 set -o errexit
 echo "Entra al bash"
 echo "Cargando el proyecto..."
-# Actualizar el sistema y asegurarse de que pip está actualizado
-apt-get update
-apt-get install -y python3-pip python3-dev libpq-dev
-
-# Instalar Poetry (si no está instalado)
+# Instalar Poetry
 curl -sSL https://install.python-poetry.org | python3 -
 
-# Agregar Poetry al PATH
+# Asegúrate de que el PATH de Poetry esté configurado correctamente
 export PATH="$HOME/.local/bin:$PATH"
 
-# Instalar las dependencias de Poetry
-poetry install
+# Instalar las dependencias de tu proyecto usando Poetry
+poetry install --no-dev
 
 # Migraciones de base de datos (si es necesario)
 poetry run python src/manage.py makemigrations
