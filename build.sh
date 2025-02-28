@@ -1,12 +1,15 @@
-#!/usr/bin/env bash
-# Exit on error
-set -o errexit
-echo "Entra al bash"
-echo "Cargando el proyecto..."
-# Hacer que el script falle si algún comando falla
+#!/bin/bash
 set -e
 
-# Instalar Poetry (si no está ya instalado)
+# Verificar si la versión de Python es correcta
+python_version=$(python --version)
+if [[ $python_version != "Python 3.12"* ]]; then
+  echo "La versión de Python es incorrecta. Cambiando a Python 3.12..."
+  pyenv install 3.12.0
+  pyenv global 3.12.0
+fi
+
+# Instalar Poetry si no está instalado
 if ! command -v poetry &> /dev/null
 then
     echo "Poetry no encontrado, instalando..."
@@ -19,8 +22,8 @@ export PATH="$HOME/.poetry/bin:$PATH"
 # Configurar el entorno virtual usando Poetry
 poetry config virtualenvs.in-project true
 
-# Instalamos las dependencias del proyecto
-poetry install --no-dev  # --no-dev omite las dependencias de desarrollo en producción
+# Instalar dependencias sin las de desarrollo
+poetry install --no-dev
 
 
 # Migraciones de base de datos (si es necesario)
