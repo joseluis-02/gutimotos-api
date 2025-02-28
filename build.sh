@@ -3,14 +3,25 @@
 set -o errexit
 echo "Entra al bash"
 echo "Cargando el proyecto..."
-# Instalar Poetry sin crear un entorno virtual global (usar el entorno actual)
-curl -sSL https://install.python-poetry.org | python3 - --no-venv
+# Hacer que el script falle si algún comando falla
+set -e
 
-# Asegurarse de que Poetry esté en el PATH
-export PATH="$HOME/.local/bin:$PATH"
+# Instalar Poetry (si no está ya instalado)
+if ! command -v poetry &> /dev/null
+then
+    echo "Poetry no encontrado, instalando..."
+    curl -sSL https://install.python-poetry.org | python3 -
+fi
 
-# Instalar dependencias del proyecto usando Poetry
-poetry install --no-dev
+# Agregar Poetry a la PATH
+export PATH="$HOME/.poetry/bin:$PATH"
+
+# Configurar el entorno virtual usando Poetry
+poetry config virtualenvs.in-project true
+
+# Instalamos las dependencias del proyecto
+poetry install --no-dev  # --no-dev omite las dependencias de desarrollo en producción
+
 
 # Migraciones de base de datos (si es necesario)
 poetry run python src/manage.py makemigrations
