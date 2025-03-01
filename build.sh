@@ -4,8 +4,10 @@
 poetry env use python3.11 || exit 1
 
 # Instalar dependencias sin las de desarrollo
-poetry install --no-dev || exit 1
+poetry install --only main || exit 1
 
+ruta_actual=$(pwd)
+echo "La ruta actual es: $ruta_actual"
 # Moverse al directorio correcto
 cd src || exit 1
 #cd ..
