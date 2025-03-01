@@ -6,15 +6,14 @@ set -o errexit
 poetry env use 3.11 || echo "Python 3.11 ya está en uso"
 
 # Instalar dependencias
-poetry install --no-root
-
-# Exportar variables para evitar problemas con `src/src`
-export PYTHONPATH=/opt/render/project/src
+poetry install . --no-root
 
 echo "Instalación completada"
 # Mostrar la ruta actual
 echo "Ruta actual después del ajuste:"
 pwd
+echo "Directorios:"
+ls
 # Ejecutar migraciones
 #poetry run python manage.py makemigrations || exit 1
 #poetry run python manage.py migrate || exit 1
