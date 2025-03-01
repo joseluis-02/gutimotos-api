@@ -31,7 +31,6 @@ DATABASES = {
 }
 
 # STATIC FILE
-STATICFILES_DIRS = [BASE_DIR / 'static']
 # Configura tus credenciales de AWS
 AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
