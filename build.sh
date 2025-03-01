@@ -12,6 +12,9 @@ echo "Instalación completada"
 # Mostrar la ruta actual
 echo "Ruta actual después del ajuste:"
 pwd
+cd src || exit 1
+echo "Ruta actual después de cambiar a src:"
+pwd
 echo "Directorios:"
 ls -la
 # Ejecutar migraciones
