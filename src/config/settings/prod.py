@@ -13,13 +13,13 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 # Configuracion de Render
 DEBUG = False
 
-ALLOWED_HOSTS = ['gutimotos.com','localhost']
+ALLOWED_HOSTS = ['localhost']
 # Configuracion de Render
-'''
+
 RENDER_EXTERNAL_HOSTNAME = get_env_variable('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-'''
+
 # Database
 DATABASES = {
     'default': {
