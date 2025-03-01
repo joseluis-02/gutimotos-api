@@ -8,6 +8,10 @@ poetry install --no-dev || exit 1
 
 # Moverse al directorio correcto
 cd src || exit 1
+#cd ..
+ls
+ruta_actual=$(pwd)
+echo "La ruta actual es: $ruta_actual"
 
 # Ejecutar migraciones
 poetry run python manage.py makemigrations || exit 1
