@@ -1,8 +1,13 @@
-#!/bin/bash
+# Mostrar la ruta actual en Render
+echo "Ruta actual:"
+pwd  # Esto imprimirá la ruta en la que se ejecuta el script
 
-# Asegurarse de que Poetry use Python 3.11
+# Listar archivos y directorios en la ruta actual
+echo "Contenido del directorio actual:"
+ls -la  # Esto te ayudará a ver si el código está en la ruta correcta
+
+# Forzar el uso de Python 3.11 en Poetry
 poetry env use python3.11 || exit 1
-
 # Instalar dependencias sin las de desarrollo
 poetry install --only main || exit 1
 
