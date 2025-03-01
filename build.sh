@@ -1,7 +1,11 @@
-# Mostrar la ruta actual en Render
-echo "Ruta actual:"
-pwd  # Esto imprimirá la ruta en la que se ejecuta el script
+# Moverse al directorio correcto si Render duplicó "src/"
+if [ -d "src" ]; then
+  cd src
+fi
 
+# Mostrar la ruta actual
+echo "Ruta actual después del ajuste:"
+pwd
 # Listar archivos y directorios en la ruta actual
 echo "Contenido del directorio actual:"
 ls -la  # Esto te ayudará a ver si el código está en la ruta correcta
