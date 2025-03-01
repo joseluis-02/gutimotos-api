@@ -6,14 +6,14 @@ set -o errexit
 poetry env use 3.11 || echo "Python 3.11 ya está en uso"
 
 # Instalar dependencias
-poetry install . --no-root
+poetry install poetry install --no-root --no-interaction
 
 echo "Instalación completada"
 # Mostrar la ruta actual
 echo "Ruta actual después del ajuste:"
 pwd
 echo "Directorios:"
-ls
+ls -la
 # Ejecutar migraciones
 #poetry run python manage.py makemigrations || exit 1
 #poetry run python manage.py migrate || exit 1
