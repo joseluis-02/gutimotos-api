@@ -13,7 +13,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 # Configuracion de Render
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['216.24.57.1']
 # Configuracion de Render
 
 RENDER_EXTERNAL_HOSTNAME = get_env_variable('RENDER_EXTERNAL_HOSTNAME')

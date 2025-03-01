@@ -1,4 +1,4 @@
-# Base configuración base
+# Configuración base
 from .base import *
 # Lectura de mi archivo secreto
 with open(BASE_DIR/ "secret.json") as f:
@@ -13,7 +13,8 @@ def get_secret(secret_name, secrets=secret):
         raise ImproperlyConfigured(msg)
 
 # Modo de depuración del proyecto
-DEBUG = get_secret('DEBUG')
+DEBUG = False
+ALLOWED_HOSTS = get_secret('ALLOWED_HOSTS')
 SECRET_KEY = get_secret('SECRET_KEY')
 
 # Base de datos
@@ -28,13 +29,31 @@ DATABASES = {
     }
 }
 
-# Configuración de archivos estáticos del proyecto
-STATIC_URL = 'static/'
-# Configuración de archivos media del proyecto
-MEDIA_URL = '/media/'  # URL para acceder a los archivos media
-MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
+# STATIC FILE
+# Configura tus credenciales de AWS
+AWS_ACCESS_KEY_ID = get_secret('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = get_secret('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = get_secret('AWS_STORAGE_BUCKET_NAME')
+# URL base para los archivos
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN = False
 
-# Configuración de correo
+# URL base para los archivos
+STORAGES = {
+    # Media
+    "default": {
+        "BACKEND": "core.aws.s3.MediaStorage",
+        #"BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+    # CSS JS
+    "staticfiles": {
+        "BACKEND": "core.aws.s3.StaticStorage",
+    },
+}
+
+# Ajusta también las URLs para acceder a los archivos en S3:
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 # Internationalization y configuracion de zona horario
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
