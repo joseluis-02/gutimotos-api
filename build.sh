@@ -18,8 +18,8 @@ pwd
 echo "Directorios:"
 ls -la
 # Ejecutar migraciones
-#poetry run python manage.py makemigrations || exit 1
-#poetry run python manage.py migrate || exit 1
+poetry run python manage.py makemigrations || exit 1
+poetry run python manage.py migrate || exit 1
 
 # Recolectar archivos estáticos (si es necesario)
-#poetry run python manage.py collectstatic --noinput || exit 1
+poetry run python manage.py collectstatic --noinput || exit 1
