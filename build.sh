@@ -6,7 +6,7 @@ set -o errexit
 poetry env use 3.11 || echo "Python 3.11 ya está en uso"
 
 # Instalar dependencias
-poetry install poetry install --no-root --no-interaction
+poetry install --no-root --no-interaction
 
 echo "Instalación completada"
 # Mostrar la ruta actual
