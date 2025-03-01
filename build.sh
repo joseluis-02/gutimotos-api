@@ -1,32 +1,21 @@
-# Moverse al directorio correcto si Render duplicó "src/"
-if [ -d "src" ]; then
-  cd src
-fi
+#!/usr/bin/env bash
+# Salir si ocurre un error
+set -o errexit  
 
-# Mostrar la ruta actual
-echo "Ruta actual después del ajuste:"
-pwd
-# Listar archivos y directorios en la ruta actual
-echo "Contenido del directorio actual:"
-ls -la  # Esto te ayudará a ver si el código está en la ruta correcta
+# Especificar la versión de Python (Render usa 3.11 por defecto)
+poetry env use 3.11 || echo "Python 3.11 ya está en uso"
 
-# Forzar el uso de Python 3.11 en Poetry
-poetry env use python3.11 || exit 1
-# Instalar dependencias sin las de desarrollo
-poetry install --only main || exit 1
+# Instalar dependencias
+poetry install --no-root
 
-ruta_actual=$(pwd)
-echo "La ruta actual es: $ruta_actual"
-# Moverse al directorio correcto
-cd src || exit 1
-#cd ..
-ls
-ruta_actual=$(pwd)
-echo "La ruta actual es: $ruta_actual"
+# Exportar variables para evitar problemas con `src/src`
+export PYTHONPATH=/opt/render/project/src
+
+echo "Instalación completada"
 
 # Ejecutar migraciones
-poetry run python manage.py makemigrations || exit 1
-poetry run python manage.py migrate || exit 1
+#poetry run python manage.py makemigrations || exit 1
+#poetry run python manage.py migrate || exit 1
 
 # Recolectar archivos estáticos (si es necesario)
-poetry run python manage.py collectstatic --noinput || exit 1
+#poetry run python manage.py collectstatic --noinput || exit 1
