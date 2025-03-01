@@ -1,13 +1,17 @@
 #!/bin/bash
-set -e
+
+# Asegurarse de que Poetry use Python 3.11
+poetry env use python3.11 || exit 1
 
 # Instalar dependencias sin las de desarrollo
-poetry install --no-dev
-# Configurar el entorno con la versión correcta de Python
-poetry env use python3.11
-# Migraciones de base de datos (si es necesario)
-poetry run python src/manage.py makemigrations
-poetry run python src/manage.py migrate
+poetry install --no-dev || exit 1
 
-# Recolectar archivos estáticos (si es necesario para producción)
-poetry run python src/manage.py collectstatic --noinput
+# Moverse al directorio correcto
+cd src || exit 1
+
+# Ejecutar migraciones
+poetry run python manage.py makemigrations || exit 1
+poetry run python manage.py migrate || exit 1
+
+# Recolectar archivos estáticos (si es necesario)
+poetry run python manage.py collectstatic --noinput || exit 1
