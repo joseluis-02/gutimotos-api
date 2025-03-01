@@ -12,7 +12,9 @@ poetry install --no-root
 export PYTHONPATH=/opt/render/project/src
 
 echo "Instalación completada"
-
+# Mostrar la ruta actual
+echo "Ruta actual después del ajuste:"
+pwd
 # Ejecutar migraciones
 #poetry run python manage.py makemigrations || exit 1
 #poetry run python manage.py migrate || exit 1
