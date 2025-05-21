@@ -18,27 +18,34 @@ DJANGO_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 )
-# Aplicaciones locales o creados por ti
-LOCAL_APPS = (
-    # Aquí instala tus aplicaciones
-    'apps.persons',
-    'apps.users',
-    'apps.motorcycles',
-    'apps.customers',
-    'apps.employees',
-    'apps.purchases',
-    'apps.sales',
-    'apps.shareholders',
-    'apps.suppliers',
-    'apps.warehouses',
-)
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (
     # Aquí define aplicaciones de otros desarrolladores
     'rest_framework',
+    # Simple JWT
+    'rest_framework_simplejwt.token_blacklist',
+    # Storage de archivos
     'storages',
+    # Filters
     'django_filters',
+    # Compressor 
+    'compressor',
+    # Htmx
+    "django_htmx",
 )
+# Aplicaciones locales o creados por ti
+LOCAL_APPS = (
+    # Aquí instala tus aplicaciones
+    'apps.core',
+    'apps.persons',
+    'apps.categories',
+    'apps.measures',
+    'apps.prices',
+    'apps.products',
+    'apps.motorcycles',
+    'apps.users',
+)
+
 # Definición general de aplicaciones
 INSTALLED_APPS = DJANGO_APPS+THIRD_PARTY_APPS+LOCAL_APPS
 
@@ -51,10 +58,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Middleware para el manejo de HTMX
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 # Backends de la API
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 }
 # Archivo root de las urls del proyecto
 ROOT_URLCONF = 'config.urls'
@@ -101,4 +112,3 @@ AUTH_USER_MODEL = 'users.User'
 
 # Definición del tamaño del id auto_increment para todos lo modelos dentro del proyecto
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

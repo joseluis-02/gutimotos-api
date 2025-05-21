@@ -5,7 +5,7 @@ from model_utils.models import (
     TimeStampedModel
 )
 # Modelo abstracto
-from core.models.natural_or_legal_person import NaturalOrLegalPerson
+from apps.core.models.base import NaturalOrLegalPerson
 
 # Modelo Proveedor
 class Supplier(NaturalOrLegalPerson,TimeStampedModel):

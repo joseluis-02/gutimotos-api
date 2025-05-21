@@ -10,7 +10,6 @@ packages = [{include = "gutimotos_api", from = "src"}]
 python = "^3.11"
 django = "^5.1.4"
 djangorestframework = "^3.15.2"
-requests = "^2.32.3"
 django-model-utils = "^5.0.0"
 django-storages = "^1.14.4"
 boto3 = "^1.36.14"
@@ -18,10 +17,17 @@ pillow = "^11.1.0"
 django-filter = "^25.1"
 gunicorn = "^23.0.0"
 psycopg = {extras = ["binary"], version = "^3.2.5"}
+django-compressor = "^4.5.1"
+zeep = "^4.3.1"
+django-htmx = "^1.23.0"
+firebase-admin = "^6.8.0"
+djangorestframework-simplejwt = "^5.5.0"
+babel = "^2.17.0"
 
 
 [tool.poetry.group.dev.dependencies]
 python-decouple = "^3.8"
+django-browser-reload = "^1.18.0"
 
 [build-system]
 requires = ["poetry-core"]

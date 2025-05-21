@@ -6,11 +6,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     # URLs regulares de la app motorcycles
-     path('motorcycles/', include('apps.motorcycles.urls', namespace='motorcycles')),
-     # URLs API de la app blog (versión 1)
-     path("motorcycles/api/", include("apps.motorcycles.api.urls", namespace="motorcycles_api")),
+    # App products
+    path("", include("apps.products.urls", namespace="products")),
+    # App motorcycles
+    path("", include("apps.motorcycles.urls", namespace="motorcycles")),
 ]
 
 if settings.DEBUG:
+    urlpatterns.append(path("__reload__/", include("django_browser_reload.urls")),)  
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

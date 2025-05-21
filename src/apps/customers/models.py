@@ -7,7 +7,7 @@ from model_utils.models import (
     TimeStampedModel
 )
 # local models
-from core.models.natural_or_legal_person import NaturalOrLegalPerson
+from apps.core.models.base import NaturalOrLegalPerson
 # Model Customer
 class Customer(NaturalOrLegalPerson,TimeStampedModel):
     id:UUID = models.UUIDField(

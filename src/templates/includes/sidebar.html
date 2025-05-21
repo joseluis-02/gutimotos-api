@@ -1,0 +1,160 @@
+<aside
+  :class="sidebarToggle ? 'translate-x-0 lg:w-[90px]' : '-translate-x-full'"
+  class="sidebar fixed left-0 top-0 z-9999 flex h-screen w-[290px] flex-col overflow-y-hidden border-r border-gray-200 bg-white px-5 dark:border-gray-800 dark:bg-black lg:static lg:translate-x-0"
+>
+  <!-- SIDEBAR HEADER -->
+  <div
+    :class="sidebarToggle ? 'justify-center' : 'justify-between'"
+    class="flex items-center gap-2 pt-8 sidebar-header pb-7"
+  >
+    <a href="{% url 'dashboard:index' %}">
+      <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
+        <h1 class="dark:hidden text-black font-bold text-xl">
+          <span class="text-black">GUTI</span><span class="text-red-500">MOTOS</span>
+        </h1>
+        <h1 class="hidden dark:block text-white font-bold text-xl">
+          <span class="text-white">GUTI</span><span class="text-red-500">MOTOS</span>
+        </h1>
+      </span>
+      {% load static %}
+      <img
+        class="logo-icon"
+        :class="sidebarToggle ? 'lg:block' : 'hidden'"
+        src="{% static "images/logo/logo-icon.svg" %}"
+        alt="Logo"
+      />
+    </a>
+  </div>
+  <!-- SIDEBAR HEADER -->
+
+  <div
+    class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar"
+  >
+    <!-- Sidebar Menu -->
+    <nav x-data="{selected: $persist('Dashboard')}">
+     <!-- Menu Almacen -->
+      <div>
+        <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400">
+          <span
+            class="menu-group-title"
+            :class="sidebarToggle ? 'lg:hidden' : ''"
+          >
+            ALMACEN
+          </span>
+        </h3>
+
+        <ul class="flex flex-col gap-4 mb-6">
+
+          <!-- Menu Item Categorías -->
+          <li>
+            <a
+              href="#"
+              @click.prevent="selected = (selected === 'Categories' ? '' : 'Categories')" 
+              class="menu-item group"
+              :class="(selected === 'Categories') ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Categorías</span>
+          
+              <svg
+                class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current"
+                :class="[
+                  selected === 'Categories' ? 'menu-item-arrow-active' : 'menu-item-arrow-inactive',
+                  sidebarToggle ? 'lg:hidden' : ''
+                ]"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                  stroke=""
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          
+            <!-- Dropdown Menu -->
+            <div class="overflow-hidden transform translate" :class="selected === 'Categories' ? 'block' : 'hidden'">
+              <ul :class="sidebarToggle ? 'lg:hidden' : 'flex'" class="flex flex-col gap-1 mt-2 menu-dropdown pl-9">
+                <li>
+                  <a
+                    href="{% url 'categories:hx_category_card_list' %}"
+                    class="menu-dropdown-item group {% if request.resolver_match.url_name == 'hx_category_card_list' %}menu-dropdown-item-active{% else %}menu-dropdown-item-inactive{% endif %}"
+                  >
+                    Listar
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          
+          <!-- Menu Item Categorías -->
+
+          <!-- Menu Item Medidas -->
+          <li>
+            <a
+              href="#"
+              @click.prevent="selected = (selected === 'Medidas' ? '':'Medidas')"
+              class="menu-item group"
+              :class="(selected === 'Medidas') || (page === 'tabla') ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Medidas
+              </span>
+
+              <svg
+                class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current"
+                :class="[(selected === 'Medidas') ? 'menu-item-arrow-active' : 'menu-item-arrow-inactive', sidebarToggle ? 'lg:hidden' : '' ]"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+                  stroke=""
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+
+            <!-- Dropdown Menu Start -->
+            <div
+              class="overflow-hidden transform translate"
+              :class="(selected === 'Medidas') ? 'block' :'hidden'"
+            >
+              <ul
+                :class="sidebarToggle ? 'lg:hidden' : 'flex'"
+                class="flex flex-col gap-1 mt-2 menu-dropdown pl-9"
+              >
+                <li>
+                  <a
+                    href="{% url 'measures:hx_measure_card_list' %}"
+                    class="menu-dropdown-item group {% if request.resolver_match.url_name == 'hx_measure_card_list' %}menu-dropdown-item-active{% else %}menu-dropdown-item-inactive{% endif %}"
+                  >
+                    Listar
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <!-- Dropdown Menu End -->
+          </li>
+          <!-- Menu Item Medidas -->
+        </ul>
+      </div>
+    </nav>
+    <!-- Sidebar Menu -->
+
+  </div>
+</aside>

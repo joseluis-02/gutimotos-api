@@ -4,6 +4,7 @@
 poetry.lock
 
 # Archivos compilados de Python
+*.pyo
 *.pyc
 __pycache__/
 
@@ -24,3 +25,5 @@ db.sqlite3
 media/*
 # Archivo de credenciales
 src/secret.json
+# Firebase key
+firebase-admin-key.json

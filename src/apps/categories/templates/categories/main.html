@@ -1,0 +1,18 @@
+{% extends 'layouts/dashboard_layout.html'%}
+{% load static %}
+{% block title %} Categorías {% endblock title %}
+{% block breadcrumb %}
+{% include "includes/breadcrumb.html" with pageName="Categorías" %}
+{% endblock breadcrumb %}
+
+{% block content %}
+
+  <div
+    id="category-container" class="space-y-5 sm:space-y-6">
+    {% include 'categories/partials/card-list.html' %}
+  </div>
+  {% include 'categories/modals/detail.html' %}
+  
+
+
+{% endblock content %}

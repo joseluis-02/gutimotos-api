@@ -1,0 +1,101 @@
+
+{% url 'measures:card_list' as measure_card_list %}
+{% include "ui/forms/search.html" with placeholder="Buscar en unidades de medidas" hx_url=measure_card_list hx_target="#measure-container" search=search %}
+
+{% for o in objs %}
+<div class="p-5 border mb-2 border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+                <div>
+                    <p
+                    class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400"
+                    >
+                    Abreviatura
+                    </p>
+                    <p
+                    class="text-sm font-medium text-gray-800 dark:text-white/90"
+                    >
+                    {{o.short_name}}
+                    </p>
+                </div>
+
+                <div>
+                    <p
+                    class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400"
+                    >
+                    Descripción
+                    </p>
+                    <p
+                    class="text-sm font-medium text-gray-800 dark:text-white/90"
+                    >
+                    {{ o.name}}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
+            <!-- Botón: Ver -->
+            <button
+                @click="isMeasureDetailModal = true"
+                hx-get="{% url 'measures:hx_measure_detail' o.id %}"
+                hx-target="#measure-detail-modal"
+                hx-swap="innerHTML"
+                class="inline-flex items-center justify-center p-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            </button>
+        </div>
+
+    </div>
+</div>
+{% empty %}
+<p class="text-sm text-center font-medium text-gray-800 dark:text-white/90">
+    {% if search|length > 0 %}
+        No se encontraron resultados para: 
+        <!-- Warning Badge-->
+        <span
+        class="inline-flex items-center justify-center gap-1 rounded-full bg-warning-50 px-2.5 py-0.5 text-sm font-medium text-warning-600 dark:bg-warning-500/15 dark:text-orange-400"
+        >
+        {{ search }}
+        </span>
+    {% else %}
+        La lista de unidades de medida está vacía.
+    {% endif %}
+
+    
+</p>
+{% endfor %}
+
+<!-- Paginación -->
+<div class="flex flex-col sm:flex-row justify-between items-center">
+    {% if objs %}
+        <div class="mb-4 sm:mb-0 text-sm text-gray-600 dark:text-gray-400">
+            Mostrando {{ objs.number }} de {{ objs.paginator.num_pages }} páginas
+        </div>
+    {% endif %}
+
+    <div class="flex space-x-2">
+        <!-- Botón Anterior -->
+        {% if objs.has_previous %}
+            <button
+            hx-get="?page={{ objs.previous_page_number }}&search={{ search }}"
+            hx-target="#measure-container"
+            class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
+            >Anterior</button>
+        {% endif %}
+        
+        <!-- Botón Siguiente -->
+        {% if objs.has_next %}
+            <button
+            hx-get="?page={{ objs.next_page_number }}&search={{ search }}"
+            hx-target="#measure-container"
+            class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
+            >Siguiente</button>
+        {% endif %}
+    </div>
+</div>
