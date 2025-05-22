@@ -1,62 +1,93 @@
-# Configuración base
+#import Python
+import os
+from datetime import timedelta
+# Archivo de configuración base
 from .base import *
-# Lectura de mi archivo secreto
-with open(BASE_DIR/ "secret.json") as f:
+# Firebase
+import firebase_admin
+from firebase_admin import credentials
+
+# SECURITY WARNING: keep the secret key used in production secret!
+with open(BASE_DIR/"secret.json") as f:
     secret = json.loads(f.read())
-    
-# Función para obtener las variables de mi archivo secreto
-def get_secret(secret_name, secrets=secret):
+
+def get_env_variable(secret_name, secrets=secret):
     try:
         return secrets[secret_name]
-    except:
-        msg = "la variable %s no existe" % secret_name
-        raise ImproperlyConfigured(msg)
+    except KeyError:
+        raise ImproperlyConfigured(f"La variable de entorno {secret_name} no está configurada")
 
-# Modo de depuración del proyecto
+# Secret key del proyecto
+SECRET_KEY = get_env_variable('SECRET_KEY')
+
+# Modo de despliegue en developer
 DEBUG = False
-ALLOWED_HOSTS = get_secret('ALLOWED_HOSTS')
-SECRET_KEY = get_secret('SECRET_KEY')
 
-# Base de datos
+ALLOWED_HOSTS = ['127.0.0.1']
+# Configuracion de Render
+
+EXTERNAL_HOSTNAME = get_env_variable('ALLOWED_HOSTS')
+if EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(EXTERNAL_HOSTNAME)
+
+# Database
 DATABASES = {
     'default': {
-        'ENGINE': get_secret('DB_ENGINE'),
-        'NAME': get_secret('DB_NAME'),
-        'USER': get_secret('DB_USER'),
-        'PASSWORD': get_secret('DB_PASSWORD'),
-        'HOST': get_secret('DB_HOST'),
-        'PORT': get_secret('DB_PORT'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': get_env_variable('DB_NAME'),
+        'USER': get_env_variable('DB_USER'),
+        'PASSWORD': get_env_variable('DB_PASSWORD'),
+        'HOST': get_env_variable('DB_HOST'),
+        'PORT': get_env_variable('DB_PORT'),
     }
 }
 
-# STATIC FILE
-# Configura tus credenciales de AWS
-AWS_ACCESS_KEY_ID = get_secret('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = get_secret('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = get_secret('AWS_STORAGE_BUCKET_NAME')
-# URL base para los archivos
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_CUSTOM_DOMAIN = False
+# Configuración de archivos estáticos del proyecto
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# URL base para los archivos
-STORAGES = {
-    # Media
-    "default": {
-        "BACKEND": "core.aws.s3.MediaStorage",
-        #"BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    },
-    # CSS JS
-    "staticfiles": {
-        "BACKEND": "core.aws.s3.StaticStorage",
-    },
+# Configuración de archivos media del proyecto
+MEDIA_URL = '/media/'  # URL para acceder a los archivos media
+MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
+
+# Busca el path ruta en tu máquina puede variar la ruta
+#NPM_BIN_PATH = '/home/usuario/.nvm/versions/node/v22.12.0/bin/npm'
+
+#Configuracion de Compress
+#COMPRESS_ROOT = BASE_DIR / 'static'
+#COMPRESS_ENABLED = True
+#STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+
+# Configuración de Firebase
+cred = credentials.Certificate(BASE_DIR / 'firebase-admin-key.json')
+firebase_admin.initialize_app(cred)
+# Configuración de SimpleJWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=10),
+    # Este código revoca todos los tokens de un usuario
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    # Django actualiza el campo last_login del modelo User
+    'UPDATE_LAST_LOGIN': True,
+    
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    'TOKEN_OBTAIN_SERIALIZER': 'users.api.auth.serializers.custom_token_obtain_pair.CustomTokenObtainPairSerializer',
 }
 
-# Ajusta también las URLs para acceder a los archivos en S3:
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# Para que DRF no convierta Decimal a float
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
+}
+
+# Configuración de CORS
+# En desarrollo, permite todo
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 # Internationalization y configuracion de zona horario
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
 LANGUAGE_CODE = 'es-BO'
 
 TIME_ZONE = 'UTC'

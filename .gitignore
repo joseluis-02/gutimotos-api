@@ -27,3 +27,9 @@ media/*
 src/secret.json
 # Firebase key
 firebase-admin-key.json
+
+# Archivos de configuración local
+local.py
+
+# Archivos media
+src/media/*
