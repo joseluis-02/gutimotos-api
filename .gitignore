@@ -33,3 +33,4 @@ local.py
 
 # Archivos media
 src/media/*
+src/staticfiles/*
