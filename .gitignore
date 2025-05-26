@@ -34,3 +34,6 @@ local.py
 # Archivos media
 src/media/*
 src/staticfiles/*
+
+# Archivos de configuración en ubuntu
+gunicorn_start.sh

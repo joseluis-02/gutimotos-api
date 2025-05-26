@@ -23,7 +23,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 # Modo de despliegue en developer
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.50','127.0.0.1','*']
 # Configuracion de Render
 
 EXTERNAL_HOSTNAME = get_env_variable('ALLOWED_HOSTS')
