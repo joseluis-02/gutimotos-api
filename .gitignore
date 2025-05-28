@@ -1,39 +1,59 @@
 # .gitignore
-# Entorno virtual
-.venv/
-poetry.lock
-
-# Archivos compilados de Python
+# --------------------------------------
+# Python / Django
+# --------------------------------------
+dist/
+build/
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+*$py.class
+**/migrations/*.py[cod]
 *.pyo
 *.pyc
-__pycache__/
-
-# Configuración específica de la máquina
-*.env
-
-# Archivos estáticos y de medios generados
-
-# Archivos de migraciones
-**/migrations/*.py[cod]
-
-# Archivos de bases de datos locales
+# Django DB local
 db.sqlite3
+*.sqlite3
+# Archivos de entorno (NO subir nunca claves)
+*.env
+.env
+.env.*
+.venv/
+.poetry/
 
-# Configuraciones de visual studio code
-.vscode
-# No subir archivos estśticos
-media/*
-# Archivo de credenciales
+# Archivo de credenciales y secretos
 src/secret.json
-# Firebase key
 firebase-admin-key.json
 
-# Archivos de configuración local
-local.py
-
-# Archivos media
-src/media/*
-src/staticfiles/*
+# --------------------------------------
+# Archivos del sistema operativo / IDEs
+# --------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
 # Archivos de configuración en ubuntu
 gunicorn_start.sh
+
+# Otros posibles temporales
+*.bak
+*.tmp
+
+# Archivos de logs o temporales
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# --------------------------------------
+# Static/media solo si NO los subes
+# (Descomenta si los manejas en S3/CDN y no local)
+media/
+staticfiles/

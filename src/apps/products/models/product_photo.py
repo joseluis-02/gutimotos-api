@@ -6,6 +6,7 @@ from model_utils.models import TimeStampedModel
 from ..models import Product
 # Functions
 from ..functions import product_photo_upload_s3
+from apps.core.utils import compress_image_to_webp
 
 # Modelo imagen del producto
 class ProductPhoto(TimeStampedModel):
@@ -34,3 +35,8 @@ class ProductPhoto(TimeStampedModel):
         ]
     def __str__(self):
         return f'{self.image_url}'
+    def save(self, *args, **kwargs):
+        if self.image_url and not self.image_url.name.endswith(".webp"):
+            self.image_url = compress_image_to_webp(self.image_url)
+
+        super().save(*args, **kwargs)

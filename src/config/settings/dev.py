@@ -46,9 +46,29 @@ DATABASES = {
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# AWS Storage
+AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = get_env_variable('AWS_S3_REGION_NAME', default='us-east-1')
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None  # Recomendado desde Django 3.1
+AWS_QUERYSTRING_AUTH = False
+AWS_LOCATION = 'media'
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=31536000",  # Cache por 1 año
+}
+# Dominio para servir archivos
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
+# Media
+DEFAULT_FILE_STORAGE = "config.storage_backends.MediaStorage"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
 # Configuración de archivos media del proyecto
-MEDIA_URL = '/media/'  # URL para acceder a los archivos media
-MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
+#MEDIA_URL = '/media/'  # URL para acceder a los archivos media
+#MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
 
 # Busca el path ruta en tu máquina puede variar la ruta
 #NPM_BIN_PATH = '/home/usuario/.nvm/versions/node/v22.12.0/bin/npm'

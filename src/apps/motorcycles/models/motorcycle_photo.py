@@ -11,6 +11,7 @@ from ..managers import MotorcyclePhotoManager
 from ..choices import Orientation, SideDirection
 # Functions
 from ..functions import upload_to_s3
+from apps.core.utils import compress_image_to_webp
 
 # Modelo Fotos de la motocicletas
 class MotorcyclePhoto(TimeStampedModel):
@@ -91,3 +92,8 @@ class MotorcyclePhoto(TimeStampedModel):
     # Funciones y sobreescritura
     def __str__(self):
         return f'{self.orientation} {self.side_direction} {self.motorcycle_type}'
+    def save(self, *args, **kwargs):
+        if self.image_url and not self.image_url.name.endswith(".webp"):
+            self.image_url = compress_image_to_webp(self.image_url)
+
+        super().save(*args, **kwargs)
