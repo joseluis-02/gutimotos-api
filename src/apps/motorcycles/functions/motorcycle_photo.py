@@ -9,6 +9,6 @@ def upload_to_s3(instance, filename):
     # Obtener la extensión del archivo
     ext = os.path.splitext(filename)[1]
     # Generar un nombre único de archivo (opcional, para evitar duplicados)
-    filename = f"{uuid.uuid4().hex}.{ext}"
+    filename = f"{uuid.uuid4().hex}{ext}"
     # Ruta final: products/<product_id>/<archivo>
     return f"motorcycles/{motorcycle_type}/{color_name}/{filename}"

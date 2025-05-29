@@ -23,7 +23,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 # Modo de despliegue en developer
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.1.50','127.0.0.1','*']
+ALLOWED_HOSTS = ['127.0.0.1']
 # Configuracion de Render
 
 EXTERNAL_HOSTNAME = get_env_variable('ALLOWED_HOSTS')
@@ -33,7 +33,7 @@ if EXTERNAL_HOSTNAME:
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': get_env_variable('DB_ENGINE'),
         'NAME': get_env_variable('DB_NAME'),
         'USER': get_env_variable('DB_USER'),
         'PASSWORD': get_env_variable('DB_PASSWORD'),
@@ -46,29 +46,35 @@ DATABASES = {
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# AWS Storage
+# Configura tus credenciales de AWS
 AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = get_env_variable('AWS_S3_REGION_NAME', default='us-east-1')
+# URL base para los archivos
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN = False
 
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = None  # Recomendado desde Django 3.1
-AWS_QUERYSTRING_AUTH = False
-AWS_LOCATION = 'media'
-AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=31536000",  # Cache por 1 año
+# URL base para los archivos
+STORAGES = {
+    # Media
+    "default": {
+        "BACKEND": "config.storage_backends.MediaStorage",
+        #"BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+    # CSS JS
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
 }
-# Dominio para servir archivos
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
-# Media
-DEFAULT_FILE_STORAGE = "config.storage_backends.MediaStorage"
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-
+# Ajusta también las URLs para acceder a los archivos en S3:
+#STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+'''
 # Configuración de archivos media del proyecto
-#MEDIA_URL = '/media/'  # URL para acceder a los archivos media
-#MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
+MEDIA_URL = '/media/'  # URL para acceder a los archivos media
+MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
+'''
 
 # Busca el path ruta en tu máquina puede variar la ruta
 #NPM_BIN_PATH = '/home/usuario/.nvm/versions/node/v22.12.0/bin/npm'

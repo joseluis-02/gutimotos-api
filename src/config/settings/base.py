@@ -28,8 +28,6 @@ THIRD_PARTY_APPS = (
     'storages',
     # Filters
     'django_filters',
-    # Compressor 
-    'compressor',
     # Htmx
     "django_htmx",
 )
@@ -52,6 +50,8 @@ INSTALLED_APPS = DJANGO_APPS+THIRD_PARTY_APPS+LOCAL_APPS
 # Middlewares del proyecto
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

@@ -1,59 +1,50 @@
-# .gitignore
-# --------------------------------------
-# Python / Django
-# --------------------------------------
-dist/
-build/
+# --- Python / Django ---
 __pycache__/
 *.py[cod]
 *.so
 *.egg
 *.egg-info/
 *$py.class
-**/migrations/*.py[cod]
 *.pyo
 *.pyc
+
+# Django migrations cache only (NO ignorar migraciones .py)
+**/migrations/__pycache__/
+**/migrations/*.pyc
+**/migrations/*.pyo
+
 # Django DB local
 db.sqlite3
 *.sqlite3
-# Archivos de entorno (NO subir nunca claves)
-*.env
-.env
-.env.*
+
+# --- Poetry ---
 .venv/
 .poetry/
 
-# Archivo de credenciales y secretos
-src/secret.json
-firebase-admin-key.json
+# --- Entornos y secretos ---
+.env
+*.env
 
-# --------------------------------------
-# Archivos del sistema operativo / IDEs
-# --------------------------------------
+# --- Archivos sensibles ---
+src/secret.json
+src/firebase-admin-key.json
+
+# --- IDE y sistema ---
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
 
-# Archivos de configuración en ubuntu
-gunicorn_start.sh
-
-# Otros posibles temporales
-*.bak
-*.tmp
-
-# Archivos de logs o temporales
+# --- Logs y temporales ---
 *.log
 *.pot
-*.pyc
-*.pyo
 *.swp
 *.swo
 *.bak
 *.tmp
 
-# --------------------------------------
-# Static/media solo si NO los subes
-# (Descomenta si los manejas en S3/CDN y no local)
+# --- Archivos de despliegue si NO quieres subirlos ---
+
+# --- Archivos media/static si los manejas en S3/CDN ---
 media/
 staticfiles/
