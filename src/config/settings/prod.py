@@ -24,10 +24,10 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 DEBUG = False
 
 # Hosts
-ALLOWED_HOSTS = ['127.0.0.1']
-EXTERNAL_HOSTNAME = get_env_variable('ALLOWED_HOSTS')
-if EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(EXTERNAL_HOSTNAME)
+ALLOWED_HOSTS = ["127.0.0.1"]
+external_hosts = get_env_variable('ALLOWED_HOSTS')
+if external_hosts:
+    ALLOWED_HOSTS += external_hosts
 
 # Database
 DATABASES = {
