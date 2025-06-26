@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="Gutimotos, Motocicletas, Motos, Repuestos de motos, Accesorios para motos">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="{% static 'images/favicon.ico'%}" />
+
+	<!--<link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />-->
+
+	<title>{% block title%} {% endblock%}</title>
+    {% block css %}
+        <!-- CSS global -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    {% endblock %}
+</head>
+<body>
+	<div class="wrapper">
+        <!--Partials Sidebar-->
+		{% include '../partials/sidebar.html' %}
+		<div class="main">
+            <!--Partials Navbar-->
+			{% include '../partials/navbar.html' %}
+			<main class="content">
+				<div class="container p-0">
+                    {% block content %}
+                    <!-- Contenido principal se carga aqui -->
+                    {% endblock %}
+				</div>
+			</main>
+
+            <!--Partials Footer-->
+		</div>
+	</div>
+
+    {% block js %}
+        <!-- JS global -->
+        <script src="{% static 'js/app.js' %}"></script>
+    {% endblock %}
+
+</body>
+</html>

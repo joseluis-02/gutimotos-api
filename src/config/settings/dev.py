@@ -8,7 +8,7 @@ import firebase_admin
 from firebase_admin import credentials
 
 # SECURITY WARNING: keep the secret key used in production secret!
-with open(BASE_DIR/"secret.json") as f:
+with open(BASE_DIR / 'secrets' / 'secret.json') as f:
     secret = json.loads(f.read())
 
 def get_env_variable(secret_name, secrets=secret):
@@ -21,14 +21,13 @@ def get_env_variable(secret_name, secrets=secret):
 SECRET_KEY = get_env_variable('SECRET_KEY')
 
 # Modo de despliegue en developer
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
-# Configuracion de Render
-
-EXTERNAL_HOSTNAME = get_env_variable('ALLOWED_HOSTS')
-if EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(EXTERNAL_HOSTNAME)
+# Hosts
+ALLOWED_HOSTS = ["127.0.0.1"]
+external_hosts = get_env_variable('ALLOWED_HOSTS')
+if external_hosts:
+    ALLOWED_HOSTS += external_hosts
 
 # Database
 DATABASES = {
@@ -58,7 +57,7 @@ AWS_S3_CUSTOM_DOMAIN = False
 STORAGES = {
     # Media
     "default": {
-        "BACKEND": "config.storage_backends.MediaStorage",
+        "BACKEND": "config.storages.media.MediaS3Boto3Storage",
         #"BACKEND": "storages.backends.s3boto3.S3StaticStorage",
     },
     # CSS JS
@@ -85,7 +84,7 @@ MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
 #STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 # Configuración de Firebase
-cred = credentials.Certificate(BASE_DIR / 'firebase-admin-key.json')
+cred = credentials.Certificate(BASE_DIR / 'secrets' /'firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
 # Configuración de SimpleJWT
 SIMPLE_JWT = {

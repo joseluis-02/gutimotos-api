@@ -1,5 +1,5 @@
 # Choices
-from .motorcycle_photo import SideDirection, Orientation
+from .motorcycle_file import SideDirection, Orientation
 # Exponer
 __all__ = [
     SideDirection,

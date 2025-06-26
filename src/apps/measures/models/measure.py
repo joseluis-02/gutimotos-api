@@ -5,7 +5,8 @@ from django.db import models
 class Measure(models.Model):
     code_sin:int = models.PositiveSmallIntegerField(
         null=False,
-        verbose_name='Código SIN'
+        verbose_name='Código SIN',
+        unique=True,
     )
     short_name:str = models.CharField(
         max_length=6,

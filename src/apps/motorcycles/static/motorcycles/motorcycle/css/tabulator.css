@@ -1,0 +1,27 @@
+/* Hace que el paginador y sus controles se comporten bien en móvil */
+.tabulator-paginator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.tabulator-page-size {
+  max-width: 100px;
+  width: 100%;
+}
+
+.tabulator-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.tabulator-pages button {
+  padding: 0.25rem 0.5rem;
+}

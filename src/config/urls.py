@@ -6,10 +6,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Dashboard
+    path("", include("apps.dashboard.urls", namespace="dashboard")),
+    # App users}
+    path("users/", include("apps.users.urls", namespace="users")),
     # App products
-    path("", include("apps.products.urls", namespace="products")),
+    path("products/", include("apps.products.urls", namespace="products")),
     # App motorcycles
-    path("", include("apps.motorcycles.urls", namespace="motorcycles")),
+    path("motorcycles/", include("apps.motorcycles.urls", namespace="motorcycles")),
 ]
 
 if settings.DEBUG:

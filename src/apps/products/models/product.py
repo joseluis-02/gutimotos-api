@@ -92,4 +92,4 @@ class Product(TimeStampedModel):
             models.Index(fields=['created']),
         ]
     def __str__(self):
-        return f'{self.brand} - {self.measure} - {self.code} - {self.description}'
+        return f'{self.code}'

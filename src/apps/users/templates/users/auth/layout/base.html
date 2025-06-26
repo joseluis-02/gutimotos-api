@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Somos una concesionaria de motos con las mejores marcas y modelos del mercado.">
+	<meta name="author" content="Gutisoft - gutisoft.dev@gmail.com">
+	<meta name="keywords" content="Gutimotos, Panel de administración Gutimotos, admin gutimotos,">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="{% static 'images/favicon.ico'%}" />
+
+	<!--<link rel="canonical" href="https://demo-basic.adminkit.io/pages-sign-in.html" />-->
+
+	<title>
+        {% block title %}{% endblock %}
+    </title>
+
+    <!-- CSS -->
+    {% block css %}
+        <link href="{% static 'css/app.css' %}" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    {% endblock %}
+	
+</head>
+
+<body>
+	<main class="d-flex w-100">
+		<div class="container d-flex flex-column">
+			{% block content %}
+            {% endblock %}
+		</div>
+	</main>
+
+    <!--Js-->
+    {% block js %}
+        <script src="{% static 'js/app.js'%}"></script>
+    {% endblock %}
+</body>
+</html>

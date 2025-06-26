@@ -6,7 +6,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 # Models
 from ..models import MotorcycleType
-from apps.prices.models import Currency
+from apps.core.models import Currency
 from apps.core.models import Brand
 # Managers
 
@@ -57,9 +57,9 @@ class MotorcyclePrice(TimeStampedModel):
         verbose_name_plural = 'Precio de motocicletas'
         constraints = [
             models.UniqueConstraint(
-                fields=['motorcycle_type','brand', 'currency'], 
+                fields=['motorcycle_type','brand','currency'],
                 name='unique_motorcycle_price'
             ),
         ]
     def __str__(self):
-        return f'{self.motorcycle_type} - {self.currency} - {self.base}'
+        return f'{self.motorcycle_type} - {self.base}'

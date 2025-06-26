@@ -51,7 +51,7 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 #STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 # Configuración de Firebase
-cred = credentials.Certificate(BASE_DIR / 'firebase-admin-key.json')
+cred = credentials.Certificate(BASE_DIR / 'secrets/firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
 # Configuración de SimpleJWT
 SIMPLE_JWT = {

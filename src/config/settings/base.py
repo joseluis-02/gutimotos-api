@@ -38,7 +38,7 @@ LOCAL_APPS = (
     'apps.persons',
     'apps.categories',
     'apps.measures',
-    'apps.prices',
+    #'apps.prices',
     'apps.products',
     'apps.motorcycles',
     'apps.users',
@@ -59,7 +59,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Middleware para el manejo de HTMX
-    "django_htmx.middleware.HtmxMiddleware",
+    'django_htmx.middleware.HtmxMiddleware',
+    # Custom middleware para redirección de 404
+    'config.middlewares.redirect_404.Redirect404Middleware',
 ]
 # Backends de la API
 REST_FRAMEWORK = {

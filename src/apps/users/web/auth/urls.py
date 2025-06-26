@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import UserLoginFormView, UserLogoutView
+from .views import EmailAndPasswordLoginView, UserLogoutView
 
 app_name = 'web_auth'
 
 urlpatterns = [
-    path("email-password/", UserLoginFormView.as_view(), name="web_auth_email_password"),
-    path("logout/", UserLogoutView.as_view(), name="web_auth_logout"),
+    path("auth/email-password/", EmailAndPasswordLoginView.as_view(), name="auth_email_password"),
+    path("auth/logout/", UserLogoutView.as_view(), name="auth_logout"),
 ]

@@ -1,10 +1,9 @@
 # Django
 from django.urls import path, include
 # Routers local
-from .routers import router
+from .routers import router_urls
 
 app_name = 'motorcycle_photo'
 urlpatterns = [
-    # Endpoints adicionales
-    path('', include(router.urls)),
-]
+    
+] + router_urls

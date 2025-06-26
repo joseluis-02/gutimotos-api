@@ -20,14 +20,15 @@ db.sqlite3
 # --- Poetry ---
 .venv/
 .poetry/
+.cache/
 
 # --- Entornos y secretos ---
 .env
 *.env
 
 # --- Archivos sensibles ---
-src/secret.json
-src/firebase-admin-key.json
+src/secrets/secret.json
+src/secrets/firebase-admin-key.json
 
 # --- IDE y sistema ---
 .DS_Store

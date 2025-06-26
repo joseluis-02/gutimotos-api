@@ -1,6 +1,6 @@
 # Managers
-from .motorcycle_photo import MotorcyclePhotoManager
+from .motorcycle_file import MotorcycleFileManager
 # Exponer
 __all__ = [
-    MotorcyclePhotoManager,
+    MotorcycleFileManager,
 ]

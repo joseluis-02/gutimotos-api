@@ -8,7 +8,7 @@ from model_utils.models import TimeStampedModel
 # Models
 from ..models import Product
 # Functions
-from ..functions import product_photo_upload_s3
+from ..functions import upload_to_s3
 from apps.core.utils import compress_image_to_webp
 
 # Modelo imagen del producto
@@ -23,7 +23,8 @@ class ProductPhoto(TimeStampedModel):
         help_text='Producto al que pertenece la foto',
         verbose_name='Producto',
     )
-    image_url:str = models.ImageField(
+    photo:str = models.ImageField(
+        upload_to=upload_to_s3,
         null=False,
         blank=False,
         help_text='Nombre de la foto del producto',
@@ -36,27 +37,26 @@ class ProductPhoto(TimeStampedModel):
             models.Index(fields=['created']),
         ]
     def __str__(self):
-        return f'{self.image_url}'
+        return f'{self.photo}'
     def save(self, *args, **kwargs):
         try:
-            if self.image_url and not self.image_url.name.endswith('.webp'):
+            if self.photo and not self.photo.name.endswith('.webp'):
                 # Eliminar imagen previa
                 if self.pk:
                     try:
                         old = ProductPhoto.objects.get(pk=self.pk)
-                        if old.image_url and old.image_url.name != self.image_url.name:
-                            old.image_url.delete(save=False)
+                        if old.photo and old.photo.name != self.photo.name:
+                            old.photo.delete(save=False)
                     except ProductPhoto.DoesNotExist:
                         pass
 
                 # Nombre único
-                unique_filename = f"products/{self.product.code}/{uuid.uuid4().hex}.webp"
-                
+                unique_filename = upload_to_s3
                 # Comprimir imagen a ContentFile
-                compressed_image = compress_image_to_webp(self.image_url, unique_filename)
+                compressed_image = compress_image_to_webp(self.photo, unique_filename)
 
                 # Guardar la imagen comprimida correctamente con el sistema de almacenamiento
-                self.image_url.save(unique_filename, compressed_image, save=False)
+                self.photo.save(unique_filename, compressed_image, save=False)
 
             super().save(*args, **kwargs)
 
@@ -67,6 +67,6 @@ class ProductPhoto(TimeStampedModel):
 
 
     def delete(self, *args, **kwargs):
-        if self.image_url:
-            self.image_url.delete(save=False)
+        if self.photo:
+            self.photo.delete(save=False)
         super().delete(*args, **kwargs)

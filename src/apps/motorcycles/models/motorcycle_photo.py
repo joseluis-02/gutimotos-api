@@ -1,99 +1,69 @@
 # Django
 from django.db import models
+from django.core.exceptions import ValidationError
 # Models utils
 from model_utils.models import TimeStampedModel
 # Models
-from apps.core.models import Color, Brand
-from .motorcycle_type import MotorcycleType
-# Managers
-from ..managers import MotorcyclePhotoManager
-# Choices
-from ..choices import Orientation, SideDirection
+from .motorcycle_file import MotorcycleFile
 # Functions
 from ..functions import upload_to_s3
 from apps.core.utils import compress_image_to_webp
 
-# Modelo Fotos de la motocicletas
 class MotorcyclePhoto(TimeStampedModel):
-    orientation:str = models.CharField(
-        max_length=1,
-        choices=Orientation.choices,
-        null=False,
-        verbose_name='Orientación de la foto'
+    motorcycle_file = models.ForeignKey(
+        MotorcycleFile, 
+        on_delete=models.CASCADE,
+        # Acceso desde Motorcycle
+        related_name = 'p_motorcycle_files',
+        # Filtro de consultas inversas
+        related_query_name='p_motorcycle_file',
+        # Texto de ayuda para el campo
+        help_text='Archivo de la motocicleta',
+        verbose_name='Motocicleta',
     )
-    side_direction:str = models.CharField(
-        max_length=1,
-        choices=SideDirection.choices,
-        null=False,
-        verbose_name='Dirección de lado'
-    )
-    image_url = models.ImageField(
+    photo = models.ImageField(
         upload_to=upload_to_s3, 
         blank=False, 
         null=False,
         verbose_name='Foto'
     )
-    # Foreing key
-    brand = models.ForeignKey(
-        Brand, 
-        on_delete=models.CASCADE,
-        # Acceso desde Motorcycle
-        related_name = 'pm_brands',
-        # Filtro de consultas inversas
-        related_query_name='pm_brand',
-        # Texto de ayuda para el campo
-        help_text='Marca de la motocicleta',
-        verbose_name='Marca',
-    )
-    motorcycle_type = models.ForeignKey(
-        MotorcycleType, 
-        on_delete=models.CASCADE,
-        # Acceso desde Motorcycle
-        related_name = 'pm_motorcycle_types',
-        # Filtro de consultas inversas
-        related_query_name='pm_motorcycle_type',
-        # Texto de ayuda para el campo
-        help_text='Tipo de la motocicleta',
-        verbose_name='Tipo',
-    )
-    color = models.ForeignKey(
-        Color, 
-        on_delete=models.CASCADE,
-        # Acceso desde Motorcycle
-        related_name = 'pm_colors',
-        # Filtro de consultas inversas
-        related_query_name='pm_color',
-        # Texto de ayuda para el campo
-        help_text='Color del tipo de la motocicleta',
-        verbose_name='Color',
-    )
-    # Manager
-    objects = MotorcyclePhotoManager()
-    # Class Meta
     class Meta:
         verbose_name = 'Foto de motocicleta'
-        verbose_name_plural = 'Fotos de motocicletas'
-        constraints = [
-            # Asegurar solo una imagen por lado (frontal, trasera, etc.) por tipo y color
-            models.UniqueConstraint(
-                fields=['motorcycle_type', 'color', 'side_direction'],
-                condition=~models.Q(side_direction=SideDirection.PORTADA),
-                name='unique_motorcycle_photo_by_type_color_side'
-            ),
-            models.UniqueConstraint(
-                fields=['motorcycle_type', 'color', 'orientation'], 
-                condition=models.Q(side_direction=SideDirection.PORTADA),
-                name='unique_cover_by_orientation'
-            )
-        ]
+        verbose_name_plural = 'Fotos de motocicleta'
         indexes = [
             models.Index(fields=['created']),
         ]
-    # Funciones y sobreescritura
-    def __str__(self):
-        return f'{self.orientation} {self.side_direction} {self.motorcycle_type}'
     def save(self, *args, **kwargs):
-        if self.image_url and not self.image_url.name.endswith(".webp"):
-            self.image_url = compress_image_to_webp(self.image_url)
+        try:
+            if self.photo and not self.photo.name.endswith('.webp'):
+                # Eliminar imagen previa
+                if self.pk:
+                    try:
+                        old = MotorcyclePhoto.objects.get(pk=self.pk)
+                        if old.photo and old.photo.name != self.photo.name:
+                            old.photo.delete(save=False)
+                    except MotorcyclePhoto.DoesNotExist:
+                        pass
 
-        super().save(*args, **kwargs)
+                # Nombre único
+                #unique_filename = f"products/{self.product.code}/{uuid.uuid4().hex}.webp"
+                unique_filename = upload_to_s3
+                
+                # Comprimir imagen a ContentFile
+                compressed_image = compress_image_to_webp(self.photo, unique_filename)
+
+                # Guardar la imagen comprimida correctamente con el sistema de almacenamiento
+                self.photo.save(unique_filename, compressed_image, save=False)
+
+            super().save(*args, **kwargs)
+
+        except ValidationError as ve:
+            raise ve
+        except Exception as e:
+            raise ValidationError(f"No se pudo guardar la imagen: {str(e)}")
+
+
+    def delete(self, *args, **kwargs):
+        if self.photo:
+            self.photo.delete(save=False)
+        super().delete(*args, **kwargs)

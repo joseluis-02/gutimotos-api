@@ -1,9 +1,46 @@
 # Django
 from django.db import models
+# Models
+from .economic_activity import EconomicActivity
 # Choices
 from ..choices import CategoryType, CategoryLevel
 
 # Modelo Categoría
+class Category(models.Model):
+    economic_activity = models.ForeignKey(
+        EconomicActivity,
+        null=False,
+        blank=False,
+        on_delete=models.RESTRICT,
+        verbose_name='Actividad economica'
+    )
+    code_sin = models.CharField(
+        max_length=15,
+        null=False,
+        blank=False,
+        unique=True,
+        verbose_name='Código SIN'
+    )
+    description_sin = models.TextField(
+        null=False,
+        blank=False,
+        verbose_name='Descripción SIN'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Estado'
+    )
+    # META
+    class Meta:
+        verbose_name = 'Categoría'
+        verbose_name_plural = 'Categorías'
+        # Permite registros únicos
+        constraints = [
+            models.UniqueConstraint(fields=['economic_activity','code_sin'], name='unique_economic_activity_category')
+        ]
+    def __str__(self):
+        return f'{self.code_sin} - {self.description_sin[:50]}'
+'''
 class Category(models.Model):
     father = models.ForeignKey(
         'self',
@@ -63,3 +100,4 @@ class Category(models.Model):
             url.append(father.code_sin)
             father = father.father
         return " > ".join(url[::-1])
+'''

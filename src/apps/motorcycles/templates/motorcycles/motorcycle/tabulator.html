@@ -1,0 +1,40 @@
+{# customers/templates/customers/create.html #}
+{% extends "admin/layout/base.html" %}
+{% load static %}
+{% block title %}Tabla de motocicletas{% endblock %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/libraries/tabulator.min.css' %}">
+
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'js/libraries/tabulator.min.js' %}"></script>
+    <script src="{% static 'motorcycles/motorcycle/js/tabulator.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<p>URL de la API: {% url 'motorcycles:motorcycles_api:motorcycle:tabulator-list' %}</p>
+<button type="button" class="btn btn-outline-primary" disabled>Primary button</button>
+<div class="row">
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit"><i data-feather="search" class="text-info"></i></button>
+      </form>
+    </div>
+    <div class="card-body">
+      <div id="motorcycle-table" class="tabulator tabulator-bootstrap5"></div>
+    </div>
+    <div class="card-footer">
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button id="btn-next" class="btn btn-outline-primary me-md-2" type="button">Button</button>
+        <button id="btn-return" class="btn btn-outline-primary" type="button">Button</button>
+      </div>
+  </div>
+</div>
+</div>
+{% endblock %}

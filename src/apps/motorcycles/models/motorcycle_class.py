@@ -8,7 +8,7 @@ class MotorcycleClass(models.Model):
         blank=False,
         verbose_name='Slug de la clase de la motocicleta'
     )
-    description:str = models.CharField(
+    name:str = models.CharField(
         max_length=70,
         null=False,
         blank=False,
@@ -19,7 +19,7 @@ class MotorcycleClass(models.Model):
         default=True
     )
     class Meta:
-        verbose_name = 'Motocicleta'
-        verbose_name_plural = 'Motocicletas'
+        verbose_name = 'Clase motocicleta'
+        verbose_name_plural = 'Clases de motocicleta'
     def __str__(self):
         return f'{self.name}'

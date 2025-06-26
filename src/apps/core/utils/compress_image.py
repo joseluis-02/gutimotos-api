@@ -15,7 +15,7 @@ def compress_image_to_webp(image_file, filename, quality=80):
 
         # Validar que sea una imagen
         if img.format not in ['JPEG','JPG', 'PNG', 'WEBP','HEIC']:
-            raise ValidationError("Formato de imagen no soportado: solo JPG, PNG o WEBP.")
+            raise ValidationError("Formato de imagen no soportado: solo JPEG, JPG, PNG, HEIC o WEBP.")
 
         # Convertir si tiene transparencia
         if img.mode in ("RGBA", "P"):

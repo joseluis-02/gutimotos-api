@@ -1,14 +1,9 @@
 # Django
-from django.urls import path
-# Views
-from .views import ProductPhotoListAPIView
-# App name
-app_name = 'api_product_photo'
-# Urls
+from django.urls import path, include
+# Routers local
+from .routers import router_urls
+
+app_name = 'product_photo'
 urlpatterns = [
-    path(
-        '',
-        ProductPhotoListAPIView.as_view(),
-        name='list'
-    ),
-]
+    # Endpoints adicionales
+]+ router_urls

@@ -9,6 +9,5 @@ class ProductQuerySet(models.QuerySet):
     def with_related_light(self):
         return self.select_related('brand', 'country').only(
             'id', 'code', 'description',
-            'brand__name', 'country__code',
-            'category__description_sin', 'measure__name'
+            'brand__name', 'country__code', 'measure__name'
         )

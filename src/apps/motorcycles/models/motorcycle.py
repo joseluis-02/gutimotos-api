@@ -67,8 +67,8 @@ class Motorcycle(TimeStampedModel):
         max_length=120,
         null=True,
         blank=True,
-        verbose_name='Declaración code',
-        help_text='Ingrese el código de declaración de QR'
+        verbose_name='Código de declaración',
+        help_text='Ingrese el código de declaración (opcional)'
     )
 
     # Llaves foráneas

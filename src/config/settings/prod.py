@@ -8,7 +8,7 @@ import firebase_admin
 from firebase_admin import credentials
 
 # Leer el archivo de secret de variables de entorno
-with open(BASE_DIR/"secret.json") as f:
+with open(BASE_DIR / 'secrets' / 'secret.json') as f:
     secret = json.loads(f.read())
 
 def get_env_variable(secret_name, secrets=secret):
@@ -91,7 +91,7 @@ COMPRESS_OFFLINE = True  # Para compresión en producción
 '''
 
 # Configuración de Firebase
-cred = credentials.Certificate(BASE_DIR / 'firebase-admin-key.json')
+cred = credentials.Certificate(BASE_DIR / 'secrets' / 'firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
 
 # Configuración de SimpleJWT
