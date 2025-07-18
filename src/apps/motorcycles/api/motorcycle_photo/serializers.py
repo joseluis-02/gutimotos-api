@@ -9,7 +9,7 @@ class MotorcyclePhotoSerializer(serializers.ModelSerializer):
 
 class MotorcyclePhotoListSerializer(serializers.ModelSerializer):
     brand = serializers.CharField(source='motorcycle_file.brand.name')
-    motorcycle_type = serializers.CharField(source='motorcycle_file.motorcycle_type.name')
+    motorcycle_type = serializers.CharField(source='motorcycle_file.motorcycle_type.get_full_path')
     color = serializers.CharField(source='motorcycle_file.color.name')
     class Meta:
         model = MotorcyclePhoto

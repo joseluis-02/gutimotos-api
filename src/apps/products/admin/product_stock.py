@@ -11,7 +11,6 @@ class ProductStockAdmin(admin.ModelAdmin):
     ]
     search_fields = ['product__code']
     list_filter = [
-        'product__code',
         'stock_type__name',
     ]
     ordering = ['-id']

@@ -1,6 +1,8 @@
+#Python
+import math
 # Django rest framework
 from rest_framework.response import Response
-from rest_framework.pagination import CursorPagination
+from rest_framework.pagination import CursorPagination, PageNumberPagination
 # Utils
 from apps.core.utils import extract_cursor
 
@@ -17,4 +19,15 @@ class ProductListCursorPagination(CursorPagination):
             'next_cursor':  extract_cursor(self.get_next_link(), self.cursor_query_param),
             'previous_cursor': extract_cursor(self.get_previous_link(), self.cursor_query_param),
             'data': data,
+        })
+class ProductTabulatorPageNumberPagination(PageNumberPagination):
+    page_size = 10  # tamaño por defecto
+    page_query_param = "page"
+    page_size_query_param = "size"
+
+    def get_paginated_response(self, data):
+        total_pages = math.ceil(self.page.paginator.count / self.get_page_size(self.request))
+        return Response({
+            "data": data,
+            "last_page": total_pages,
         })

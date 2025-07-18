@@ -30,6 +30,9 @@ THIRD_PARTY_APPS = (
     'django_filters',
     # Htmx
     "django_htmx",
+    # Tailwind CSS
+    'tailwind',
+    'theme',  # Esta será la app donde estará tu configuración Tailwind
 )
 # Aplicaciones locales o creados por ti
 LOCAL_APPS = (
@@ -61,7 +64,7 @@ MIDDLEWARE = [
     # Middleware para el manejo de HTMX
     'django_htmx.middleware.HtmxMiddleware',
     # Custom middleware para redirección de 404
-    'config.middlewares.redirect_404.Redirect404Middleware',
+    #'config.middlewares.redirect_404.Redirect404Middleware',
 ]
 # Backends de la API
 REST_FRAMEWORK = {
@@ -71,6 +74,9 @@ REST_FRAMEWORK = {
 }
 # Archivo root de las urls del proyecto
 ROOT_URLCONF = 'config.urls'
+
+# Tailwind CSS
+TAILWIND_APP_NAME = 'theme'
 
 # Configuración de la carpeta de templates para trabajar con vistas
 TEMPLATES = [
