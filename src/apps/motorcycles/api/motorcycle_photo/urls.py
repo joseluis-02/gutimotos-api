@@ -5,5 +5,4 @@ from .routers import router_urls
 
 app_name = 'motorcycle_photo'
 urlpatterns = [
-    
 ] + router_urls

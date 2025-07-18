@@ -24,7 +24,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 DEBUG = False
 
 # Hosts
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1","localhost", "*"]
 external_hosts = get_env_variable('ALLOWED_HOSTS')
 if external_hosts:
     ALLOWED_HOSTS += external_hosts
@@ -69,12 +69,16 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+# WhiteNoise para STATICFILES
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # MEDIA
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-# STATIC CONFIG con WhiteNoise y django-compressor
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 '''
 # Compressor
@@ -133,7 +137,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://gutimotos.com",
 ]
 '''
-
 '''
 # Asegúrate de que Django redireccione a HTTPS
 SECURE_SSL_REDIRECT = True
@@ -149,3 +152,28 @@ TIME_ZONE = 'America/La_Paz'
 USE_I18N = True      # Habilita la internacionalización
 USE_L10N = True      # (opcional, si usas localización por formatos regionales)
 USE_TZ = True        # Usa zonas horarias con reconocimiento de tiempo universal (UTC)
+
+
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {   # Mostrar errores en consola
+            'class': 'logging.StreamHandler',
+        },
+        'file': {      # También guardar errores en un archivo
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django_errors.log'),
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

@@ -12,5 +12,8 @@ class TransmissionType(models.Model):
     is_active: bool = models.BooleanField(
         default=True
     )
+    class Meta:
+        verbose_name = 'Tipo transmisión'
+        verbose_name_plural = 'Tipos de transmisión'
     def __str__(self):
         return f'{self.name}'

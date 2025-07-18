@@ -1,9 +1,9 @@
 # Dajngo
 from django import forms
-from django.contrib.auth import authenticate
-from django.core.exceptions import ValidationError
-# Models
-from ...models import User
+from django.contrib.auth import authenticate, get_user_model
+
+User = get_user_model()
+
 
 class UserLoginForm(forms.Form):
     email = forms.EmailField(
@@ -38,14 +38,14 @@ class UserLoginForm(forms.Form):
         """Normaliza y valida existencia del email"""
         email = self.cleaned_data.get('email', '').strip().lower()
         if not User.objects.filter(email=email).exists():
-            raise ValidationError("Este correo electrónico no está registrado.")
+            raise forms.ValidationError("Este correo electrónico no está registrado.")
         return email
 
     def clean_password(self):
         """Valida que la contraseña no esté vacía"""
         password = self.cleaned_data.get('password', '').strip()
         if not password:
-            raise ValidationError("La contraseña es obligatoria.")
+            raise forms.ValidationError("La contraseña es obligatoria.")
         return password
 
     def clean(self):

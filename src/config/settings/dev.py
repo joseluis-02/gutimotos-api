@@ -21,7 +21,7 @@ def get_env_variable(secret_name, secrets=secret):
 SECRET_KEY = get_env_variable('SECRET_KEY')
 
 # Modo de despliegue en developer
-DEBUG = True
+DEBUG = False
 
 # Hosts
 ALLOWED_HOSTS = ["127.0.0.1"]

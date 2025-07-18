@@ -1,8 +1,12 @@
 # Django
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib import messages
+from django.contrib.auth.views import LoginView
+from django.views import View
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.shortcuts import resolve_url
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 # Forms
 from .forms import UserLoginForm
 
@@ -12,8 +16,6 @@ class EmailAndPasswordLoginView(LoginView):
     redirect_authenticated_user = True
 
     def form_valid(self, form):
-        user = form.get_user()
-        #messages.success(self.request, f'¡Bienvenido, {user.email}!')
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -22,10 +24,19 @@ class EmailAndPasswordLoginView(LoginView):
             return next_url
         return resolve_url('dashboard:index')
 
-class UserLogoutView(LogoutView):
-    next_page = 'users:users_web:web_auth:auth_email_password'  # o usa get_next_page() si necesitas lógica adicional
+@method_decorator(never_cache, name='dispatch')
+class UserLogoutView(View):
     def dispatch(self, request, *args, **kwargs):
-        #messages.success(request, "Has cerrado sesión correctamente.")
-        # Limpiar cualquier dato extra en sesión si necesitas
+        # Cierra la sesión de forma segura
+        logout(request)
         request.session.flush()
-        return super().dispatch(request, *args, **kwargs)
+
+        # Redirige de forma explícita
+        response = redirect('/')
+
+        # Evita volver atrás con la flecha del navegador
+        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+
+        return response
