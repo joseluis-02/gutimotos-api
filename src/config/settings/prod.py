@@ -153,27 +153,3 @@ USE_I18N = True      # Habilita la internacionalización
 USE_L10N = True      # (opcional, si usas localización por formatos regionales)
 USE_TZ = True        # Usa zonas horarias con reconocimiento de tiempo universal (UTC)
 
-
-import os
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {   # Mostrar errores en consola
-            'class': 'logging.StreamHandler',
-        },
-        'file': {      # También guardar errores en un archivo
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'django_errors.log'),
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['console', 'file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
