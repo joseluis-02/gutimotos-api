@@ -1,0 +1,11 @@
+{% if products.has_next %}
+    <div 
+        class="col-span-full text-center text-gray-400 infinite-loader"
+        hx-get="?page={{ products.next_page_number }}"
+        hx-trigger="revealed"
+        hx-swap="outerHTML"
+        hx-target=".infinite-loader"
+        hx-include="[name='search'], [name='brand']">
+        <span class="loading loading-spinner text-success"></span>
+    </div>
+{% endif %}

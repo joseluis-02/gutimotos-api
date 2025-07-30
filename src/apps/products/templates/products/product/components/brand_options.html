@@ -1,0 +1,25 @@
+<!-- filter-reset: solo una vez -->
+  <input 
+      class="btn filter-reset btn-soft btn-warning" 
+      type="radio" 
+      name="brand" 
+      value=""
+      aria-label="Todos"
+      hx-get="{% url 'products:products_web:web_product:product_catalog' %}"
+      hx-target="#product-catalog-container"
+      hx-trigger="click"
+      hx-include="[name='search']"
+  />
+{% for brand in brands %}
+  <input 
+    class="btn" 
+    type="radio" 
+    value="{{ brand.id }}" 
+    name="brand" 
+    hx-get="{% url 'products:products_web:web_product:product_catalog' %}"
+    hx-target="#product-catalog-container"
+    hx-include="[name='search']"
+    hx-trigger="click"
+    aria-label="{{ brand.name }}"
+  />
+{% endfor %}

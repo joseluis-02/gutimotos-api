@@ -6,8 +6,9 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 # Models
 from apps.categories.models import Category
-from apps.core.models import Brand, Country
+from apps.core.models import Brand, Country, TypePrice
 from apps.measures.models import Measure
+
 # Managers
 from ..managers import ProductManager
 
@@ -93,3 +94,17 @@ class Product(TimeStampedModel):
         ]
     def __str__(self):
         return f'{self.code}'
+
+    def get_photo_url(self):
+        obj = self.p_photos.first()
+        if obj and obj.photo:
+            #print(obj.photo.url)
+            return obj.photo.url
+        return '/static/images/no-image.svg'  # Imagen por defecto
+
+    def get_price_public(self):
+        price = self.p_prices.filter(currency__code='BOB').first()
+        if not price:
+            return 0
+        price_type = TypePrice.objects.get(slug='venta-publico')
+        return price.base + (price.base * (price_type.profit_margin / 100))

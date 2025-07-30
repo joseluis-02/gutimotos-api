@@ -1,0 +1,5 @@
+{% for product in products %}
+    {% include "products/product/components/card.html" with product=product %}
+{% empty %}
+    <p class="col-span-full text-center text-gray-500">No hay productos disponibles.</p>
+{% endfor %}

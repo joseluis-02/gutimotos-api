@@ -1,0 +1,54 @@
+{# customers/templates/customers/create.html #}
+{% extends "admin/layout/base.html" %}
+{% load static %}
+{% block title %}Catálogo de repuestos{% endblock %}
+{% block extra_css %}
+{% endblock %}
+
+
+{% block content %}
+<div 
+  class="filter flex flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hidden space-x-2 w-full mb-2 p-1 pb-2"
+  id="brand-filter"
+  hx-trigger="load"
+  hx-get="{% url 'products:products_web:web_product:brand_options'%}"
+  hx-target="#brand-filter"
+  hx-swap="innerHTML"
+>
+<!--Contenido dinámico de filtro-->
+</div>
+<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 sm:mb-6 mb-2 p-1">
+  <!-- Input de búsqueda -->
+  <label class="input w-full sm:flex-1">
+    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </g>
+    </svg>
+    <input
+        type="search"
+        id="search"
+        name="search"
+        required
+        hx-get="{% url 'products:products_web:web_product:product_catalog'%}"
+        hx-trigger="input changed delay:500ms, keyup[key=='Enter']"
+        hx-target="#product-catalog-container"
+        hx-include="[name='brand']"
+        placeholder="Buscar por código o descripción"
+        class="w-full" />
+  </label>
+</div>
+
+<!-- Contenedor de productos -->
+<div
+    id="product-catalog-container" 
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-1">
+    {% include "products/product/partials/catalog_screen.html" %}
+    {% include "products/product/components/catalog_loader.html" %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/libraries/htmx.min.js' %}"> </script>
+{% endblock %}
