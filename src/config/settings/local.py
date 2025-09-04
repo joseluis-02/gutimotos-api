@@ -10,7 +10,7 @@ from .base import *
 # Modo de depuración del proyecto
 DEBUG = True
 SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 # Base de datos
 DATABASES = {
     'default': {
@@ -30,6 +30,17 @@ INSTALLED_APPS = INSTALLED_APPS + THIRD_PARTY_APPS_LOCAL
 # Middleware solo para desarrollo
 MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
 
+# Configuración de CORS y CSRF para desarrollo
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",  # Frontend React local
+    "http://127.0.0.1:8000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
 # Configuración de archivos estáticos del proyecto
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
@@ -53,21 +64,14 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 # Configuración de Firebase
 cred = credentials.Certificate(BASE_DIR / 'secrets/firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
-# Configuración de SimpleJWT
+# JWT local
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=10),
-    # Este código revoca todos los tokens de un usuario
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    # Django actualiza el campo last_login del modelo User
-    'UPDATE_LAST_LOGIN': True,
-    
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': config('SECRET_KEY'),
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-    'TOKEN_OBTAIN_SERIALIZER': 'users.api.auth.serializers.custom_token_obtain_pair.CustomTokenObtainPairSerializer',
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
 # Para que DRF no convierta Decimal a float

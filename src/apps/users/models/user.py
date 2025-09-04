@@ -36,6 +36,13 @@ class User(AbstractBaseUser,PermissionsMixin,TimeStampedModel):
         default=uuid4,
         editable=False
     )
+    auth_uid = models.CharField(
+        max_length=128,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name="Identificador del proveedor de autenticación"
+    )
     email:str = models.EmailField(
         max_length=255,
         unique=True,
@@ -44,6 +51,12 @@ class User(AbstractBaseUser,PermissionsMixin,TimeStampedModel):
     email_verified:bool = models.BooleanField(
         default=False,
         verbose_name='Estado de verificación del correo electrónico'
+    )
+    auth_provider = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="Proveedor de autenticación"
     )
     is_staff = models.BooleanField(
         default=False

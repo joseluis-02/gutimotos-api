@@ -2266,9 +2266,6 @@
   .flex-wrap {
     flex-wrap: wrap;
   }
-  .justify-between {
-    justify-content: space-between;
-  }
   .justify-center {
     justify-content: center;
   }
@@ -2308,26 +2305,6 @@
   .rounded-t-lg {
     border-top-left-radius: var(--radius-lg);
     border-top-right-radius: var(--radius-lg);
-  }
-  .badge-soft {
-    color: var(--badge-color, var(--color-base-content));
-    background-color: var(--badge-color, var(--color-base-content));
-  }
-  @supports (color: color-mix(in lab, red, red)) {
-    .badge-soft {
-      background-color: color-mix( in oklab, var(--badge-color, var(--color-base-content)) 8%, var(--color-base-100) );
-    }
-  }
-  .badge-soft {
-    border-color: var(--badge-color, var(--color-base-content));
-  }
-  @supports (color: color-mix(in lab, red, red)) {
-    .badge-soft {
-      border-color: color-mix( in oklab, var(--badge-color, var(--color-base-content)) 10%, var(--color-base-100) );
-    }
-  }
-  .badge-soft {
-    background-image: none;
   }
   .alert-success {
     border-color: var(--color-success);
@@ -2534,10 +2511,6 @@
     --fontsize: 0.6875rem;
     --btn-p: 0.5rem;
     --size: calc(var(--size-field, 0.25rem) * 6);
-  }
-  .badge-accent {
-    --badge-color: var(--color-accent);
-    --badge-fg: var(--color-accent-content);
   }
   .badge-secondary {
     --badge-color: var(--color-secondary);

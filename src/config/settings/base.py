@@ -21,6 +21,9 @@ DJANGO_APPS = (
 # Aplicaciones de terceros creados por otros desarrolladores
 THIRD_PARTY_APPS = (
     # Aquí define aplicaciones de otros desarrolladores
+    # Cors
+    "corsheaders",
+    # Django REST Framework
     'rest_framework',
     # Simple JWT
     'rest_framework_simplejwt.token_blacklist',
@@ -56,6 +59,8 @@ MIDDLEWARE = [
     # WhiteNoise middleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # CORS debe ir aquí, antes de CommonMiddleware
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

@@ -21,13 +21,26 @@ def get_env_variable(secret_name, secrets=secret):
 SECRET_KEY = get_env_variable('SECRET_KEY')
 
 # Modo de depuración
-DEBUG = False
+DEBUG = True
 
 # Hosts
-ALLOWED_HOSTS = ["127.0.0.1","localhost", "*"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
 external_hosts = get_env_variable('ALLOWED_HOSTS')
 if external_hosts:
     ALLOWED_HOSTS += external_hosts
+
+# Obtener la lista de dominios desde secret.json
+FRONTEND_DOMAINS = get_env_variable("FRONTEND_DOMAIN")
+# Validar que siempre sea lista, incluso si está vacía
+if not FRONTEND_DOMAINS:
+    FRONTEND_DOMAINS = []
+# CSRF y CORS
+CSRF_TRUSTED_ORIGINS = FRONTEND_DOMAINS
+CORS_ALLOWED_ORIGINS = FRONTEND_DOMAINS
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 DATABASES = {
@@ -79,71 +92,27 @@ STATICFILES_DIRS = [
 # MEDIA
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
-
-'''
-# Compressor
-THIRD_PARTY_APPS += ('compressor',)
-
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-]
-
-COMPRESS_ENABLED = not DEBUG
-COMPRESS_OFFLINE = True  # Para compresión en producción
-'''
+# Para que DRF no convierta Decimal a float
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
+    'EXCEPTION_HANDLER': 'apps.core.exceptions.custom_exception_handler',
+}
 
 # Configuración de Firebase
 cred = credentials.Certificate(BASE_DIR / 'secrets' / 'firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
 
-# Configuración de SimpleJWT
+# SimpleJWT para producción
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    # Este código revoca todos los tokens de un usuario
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    # Django actualiza el campo last_login del modelo User
-    'UPDATE_LAST_LOGIN': True,
-    
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    #Este campo le dice a SimpleJWT qué clase de token usar para representar el access token.
-    #"AUTH_TOKEN_CLASSES": ("path.to.MyCustomAccessToken",),
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-    #Si tienes un serializer personalizado, asegúrate de que esté bien validado.
-    'TOKEN_OBTAIN_SERIALIZER': 'users.api.auth.serializers.custom_token_obtain_pair.CustomTokenObtainPairSerializer',
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# Para que DRF no convierta Decimal a float
-REST_FRAMEWORK = {
-    'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
-}
-
-'''
-# Configuración de django-cors-headers
-THIRD_PARTY_APPS += ("corsheaders",)
-MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
-    *MIDDLEWARE,
-]
-CORS_ALLOW_ALL_ORIGINS = DEBUG
-
-# En producción (más seguro):
-CORS_ALLOWED_ORIGINS = [
-    "https://gutimotos.com",
-]
-'''
-'''
-# Asegúrate de que Django redireccione a HTTPS
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-'''
 # Idioma de Bolivia
 LANGUAGE_CODE = 'es-BO'
 
