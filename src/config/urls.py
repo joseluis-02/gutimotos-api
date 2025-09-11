@@ -8,6 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Dashboard
     path("", include("apps.dashboard.urls", namespace="dashboard")),
+    # Core
+    path("core/", include("apps.core.urls", namespace="core")),
     # App users}
     path("users/", include("apps.users.urls", namespace="users")),
     # App products

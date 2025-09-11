@@ -10,7 +10,7 @@ class MotorcyclePhotoCursorPagination(CursorPagination):
     max_page_size = 50  # Tamaño máximo de página que se puede pedir
     cursor_query_param = 'cursor' # Define el nombre del parámetro en la URL
     page_size_query_param = 'limit'  # /api/users/?limit=50
-    ordering = ['-created']  # Ordenar por fecha de creación de manera ascendente
+    ordering = ['-created','id']  # Ordenar por fecha de creación de manera ascendente
     # Personaliza la respuesta de paginación
     def get_paginated_response(self, data):
         return Response({

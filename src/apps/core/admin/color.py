@@ -8,6 +8,7 @@ class ColorAdmin(admin.ModelAdmin):
         'id',
         'name',
         'code_hex',
+        'is_active',
     ]
     search_fields = ['name','code_hex']
     ordering = ['-id']

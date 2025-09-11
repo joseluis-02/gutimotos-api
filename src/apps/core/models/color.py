@@ -15,6 +15,7 @@ class Color(models.Model):
         blank=True,
         verbose_name='Código de color'
     )
+    is_active:bool = models.BooleanField(default=True)
     class Meta:
         verbose_name = 'Color'
         verbose_name_plural = 'Colores'
