@@ -15,7 +15,6 @@ class MotorcyclePhotoListSerializer(serializers.ModelSerializer):
         model = MotorcyclePhoto
         fields = [
             'id',
-            'motorcycle_file',
             'photo',
             'brand',
             'motorcycle_type',

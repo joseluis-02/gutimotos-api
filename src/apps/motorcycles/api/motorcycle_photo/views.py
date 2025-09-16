@@ -21,8 +21,6 @@ from .filters import MotorcyclePhotoFilter
 from .mixins import PublicListPrivateRetrieveMixin
 
 class MotorcyclePhotoReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
-    #authentication_classes = [JWTAuthentication]
-    #permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = MotorcyclePhotoFilter
     pagination_class = MotorcyclePhotoCursorPagination

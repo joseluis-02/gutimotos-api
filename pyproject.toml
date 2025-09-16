@@ -31,6 +31,7 @@ django-tailwind = "^4.2.0"
 [tool.poetry.group.dev.dependencies]
 python-decouple = "^3.8"
 django-browser-reload = "^1.18.0"
+honcho = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core"]
