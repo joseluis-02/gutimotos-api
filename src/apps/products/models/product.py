@@ -11,6 +11,8 @@ from apps.measures.models import Measure
 
 # Managers
 from ..managers import ProductManager
+# Choices
+from apps.core.choices.product_type import ProductType
 
 # Modelo producto
 class Product(TimeStampedModel):
@@ -107,4 +109,5 @@ class Product(TimeStampedModel):
         if not price:
             return 0
         price_type = TypePrice.objects.get(slug='venta-publico')
-        return price.base + (price.base * (price_type.profit_margin / 100))
+        return price_type.calculate_price(price.base, ProductType.SPAREPART)
+        #return price.base + (price.base * (price_type.profit_margin / 100))
