@@ -2,7 +2,8 @@
 from rest_framework import serializers
 # Models
 from ...models.product_photo import ProductPhoto
-
+# Choices
+from apps.core.choices.product_type import ProductType
 class ProductPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductPhoto
@@ -10,6 +11,8 @@ class ProductPhotoSerializer(serializers.ModelSerializer):
 
 class ProductPhotoListSerializer(serializers.ModelSerializer):
     calculated_price = serializers.SerializerMethodField()
+    brand_name = serializers.SerializerMethodField()
+    measure_name = serializers.CharField(source="product.measure.name", read_only=True)
     product_description = serializers.CharField(source="product.description", read_only=True)
     product_code = serializers.CharField(source="product.code", read_only=True)
 
@@ -19,11 +22,14 @@ class ProductPhotoListSerializer(serializers.ModelSerializer):
             'id',
             'product',
             'photo',
+            'brand_name',
+            'measure_name',
             'product_code',
             'product_description',
             'calculated_price',
         ]
-
+    def get_brand_name(self, obj):
+        return obj.product.brand.name if obj.product.brand else None
     def get_calculated_price(self, obj):
         currency_code = self.context.get("currency_code")
         type_price = self.context.get("type_price")
@@ -38,7 +44,7 @@ class ProductPhotoListSerializer(serializers.ModelSerializer):
             return None
 
         # Usar la función escalonada del modelo
-        final_price = type_price.calculate_price_product_scaled_tranches(price_obj.base)
+        final_price = type_price.calculate_price(price_obj.base, ProductType.SPAREPART)
 
         return int(final_price)
 

@@ -1,3 +1,5 @@
+# Django
+from django.shortcuts import get_object_or_404
 # Django REST Framework
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,11 +10,59 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # Models
 from ...models import MotorcyclePrice, MotorcycleType
 from apps.core.models.type_price import TypePrice
-
+# Choices
+from apps.core.choices.product_type import ProductType
 
 class MotorcyclePricesByMotorcycleTypeAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    def get(self, request, motorcycle_type_id, type_price_slug):
+        # 1. Buscar tipo de precio y tipo de motocicleta (404 si no existen)
+        type_price = get_object_or_404(TypePrice, slug=type_price_slug)
+        motorcycle_type = get_object_or_404(MotorcycleType, id=motorcycle_type_id)
+
+        # 2. Buscar todos los precios base para el tipo de motocicleta
+        prices = MotorcyclePrice.objects.filter(
+            motorcycle_type=motorcycle_type
+        ).select_related("currency")
+
+        # Si no hay precios, devolver vacío (success=True)
+        if not prices:
+            return Response(
+                {
+                    "success": True,
+                    "message": "No existen precios registrados para este tipo de motocicleta",
+                    "data": {
+                        "type_price_name": type_price.name,
+                        "prices": [],
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # 3. Construir lista de precios finales (list comprehension)
+        results = [
+            {
+                "currency_name": p.currency.name,
+                "currency_code": p.currency.code,
+                "final_price": int(type_price.calculate_price(p.base, ProductType.MOTORCYCLE)),
+            }
+            for p in prices
+        ]
+
+        # 4. Respuesta final
+        return Response(
+            {
+                "success": True,
+                "message": "Lista de precios calculada exitosamente",
+                "data": {
+                    "type_price_name": type_price.name,
+                    "prices": results,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
+    '''
     def get(self, request, motorcycle_type_id, type_price_slug):
         # 1. Buscar el tipo de precio
         try:
@@ -58,7 +108,7 @@ class MotorcyclePricesByMotorcycleTypeAPIView(APIView):
         # 3. Construir lista de precios finales
         results = []
         for p in prices:
-            final_price = type_price.calculate_price_motorcycle(p.base)
+            final_price = type_price.calculate_price(p.base, ProductType.MOTORCYCLE)
             results.append({
                 "currency_name": p.currency.name,
                 "currency_code": p.currency.code,
@@ -75,3 +125,4 @@ class MotorcyclePricesByMotorcycleTypeAPIView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+        '''

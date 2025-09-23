@@ -3,6 +3,8 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import math
 # Django
 from django.db import models
+# Choices
+from ..choices.product_type import ProductType
 
 # TypePrice (Venta, Oferta, Mayorista…)
 class TypePrice(models.Model):
@@ -20,14 +22,21 @@ class TypePrice(models.Model):
         verbose_name="Slug del tipo de precio",
         help_text="Slug del tipo de precio, Ej: precio-venta, precio-compra"
     )
+    product_type = models.CharField(
+        max_length=20,
+        choices=ProductType.choices,
+        default=ProductType.BOTH,
+        verbose_name="Tipo de producto",
+    )
     profit_margin = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         null=False,
         blank=False,
-        verbose_name="Margen de ganancia producto",
-        help_text="Margen de ganancia para productos del tipo de precio, Ej: 10.00"
+        verbose_name="Margen de ganancia",
+        help_text="Margen de ganancia para producto del tipo de precio, Ej: 10.00"
     )
+    '''
     profit_margin_motorcycle = models.DecimalField(
         max_digits=5,
         decimal_places=2,
@@ -36,6 +45,7 @@ class TypePrice(models.Model):
         verbose_name="Margen de ganancia motocicleta",
         help_text="Margen de ganancia para motocicletas del tipo de precio, Ej: 5.00"
     )
+    '''
     is_active:bool = models.BooleanField(
         default=True,
         verbose_name="Tipo de precio activo",
@@ -46,6 +56,41 @@ class TypePrice(models.Model):
         verbose_name_plural = "Tipos de precios"
     def __str__(self):
         return self.name
+    
+    def calculate_price(self, base_price: Decimal, actual_product_type: str) -> Decimal:
+        
+        if base_price is None or self.profit_margin is None:
+            return Decimal("0")
+
+        try:
+            base_price = Decimal(base_price)
+            margin = Decimal(self.profit_margin)
+
+            # Determinar qué lógica aplicar
+            if actual_product_type == ProductType.MOTORCYCLE:
+                # Lógica progresiva solo para motocicletas
+                margen_pct = margin / Decimal(100)
+                margen_efectivo = margen_pct / Decimal(math.log1p(float(base_price)))
+                precio_final = base_price * (Decimal(1) + margen_efectivo)
+            else:
+                # Lógica escalonada para repuestos y otros productos
+                MIN_MARGIN = Decimal("12")
+                if base_price >= 1000:
+                    margin = MIN_MARGIN
+                else:
+                    tramos = (base_price // 100)
+                    reduction_pct = tramos * Decimal("10")
+                    margin = margin * (Decimal("100") - reduction_pct) / Decimal("100")
+                    margin = max(margin, MIN_MARGIN)
+                precio_final = base_price * (Decimal(1) + margin / Decimal(100))
+
+            return precio_final.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+
+        except (InvalidOperation, ValueError, OverflowError):
+            return Decimal("0")
+
+
+    """
     # Cálculo progresivo solo para motocicletas
     def calculate_price_motorcycle(self, base_price: Decimal) -> Decimal:
         # Si falta el precio base o el margen -> devolvemos 0
@@ -64,10 +109,10 @@ class TypePrice(models.Model):
             return Decimal("0")
     
     def calculate_price_product_scaled_tranches(self, base_price: Decimal) -> Decimal:
-        """
-        Calcula el precio de un producto aplicando reducción progresiva del profit_margin
-        según tramos de 100 unidades de precio.
-        """
+        
+        #Calcula el precio de un producto aplicando reducción progresiva del profit_margin
+        #según tramos de 100 unidades de precio.
+        
         if base_price is None or self.profit_margin is None:
             return Decimal("0")
         
@@ -93,3 +138,4 @@ class TypePrice(models.Model):
 
         except Exception:
             return Decimal("0")
+        """

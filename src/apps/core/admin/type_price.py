@@ -9,7 +9,7 @@ class TypePricepeAdmin(admin.ModelAdmin):
         'name',
         'slug',
         'profit_margin',
-        'profit_margin_motorcycle',
+        'product_type',
         'is_active',
     ]
     search_fields = ['name','slug']
