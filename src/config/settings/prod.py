@@ -112,6 +112,10 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+# Para que DRF no convierta Decimal a float
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
+}
 
 # Idioma de Bolivia
 LANGUAGE_CODE = 'es-BO'
