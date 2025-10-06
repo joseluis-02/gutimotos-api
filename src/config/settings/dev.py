@@ -35,7 +35,8 @@ DATABASES = {
         'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT'),
         'OPTIONS': {
-            'sslmode': 'require',  # necesario para Supabase
+            'sslmode': 'require',
+            'channel_binding': 'require',
         },
     }
 }

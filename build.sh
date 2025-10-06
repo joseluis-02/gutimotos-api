@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
-# Salir si ocurre un error
-set -o errexit  
+set -o errexit
+set -o pipefail
 
-# Especificar la versión de Python (Render usa 3.11 por defecto)
-poetry env use 3.11 || echo "Python 3.11 ya está en uso"
+echo "=== Build iniciado ==="
 
 # Instalar dependencias
+echo "Instalando dependencias con Poetry..."
 poetry install --no-root --no-interaction
-echo "Instalación completada"
+echo "Dependencias instaladas ✅"
 
-# Entrar a src de mi proyecto
-cd src || exit 1
-# Ejecutar migraciones
-poetry run python manage.py makemigrations || exit 1
-poetry run python manage.py migrate || exit 1
-echo "Migración completada"
+# Entrar al directorio del proyecto
+cd src || { echo "ERROR: No se pudo acceder al directorio src"; exit 1; }
 
-# Recolectar archivos estáticos (si es necesario)
-poetry run python manage.py collectstatic --noinput || exit 1
-echo "Archivo estático recolectado"
+# Ejecutar migraciones (solo migrate)
+echo "Aplicando migraciones..."
+poetry run python manage.py migrate --noinput
+echo "Migraciones aplicadas ✅"
+
+# Recolectar archivos estáticos
+echo "Recolectando archivos estáticos..."
+poetry run python manage.py collectstatic --noinput
+echo "Archivos estáticos recolectados ✅"
+
+echo "=== Build completado exitosamente ==="
