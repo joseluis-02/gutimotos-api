@@ -1,7 +1,0 @@
-# Levantar Django en localhost
-local: echo "Django server running at http://127.0.0.1:8000/" && python manage.py runserver 127.0.0.1:8000
-
-# Levantar Django en red local (IP)
-dev: echo "Django server running at http://$(hostname -I | awk '{print $1}'):8000/" && python manage.py runserver 0.0.0.0:8000
-
-tailwind: python manage.py tailwind start

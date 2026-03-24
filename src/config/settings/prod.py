@@ -53,6 +53,28 @@ DATABASES = {
         'PORT': get_env_variable('DB_PORT'),
     }
 }
+"""
+Q_CLUSTER = {
+    'name': 'gutimotos',
+    'workers': 2,              # Suficiente para tus tareas actuales
+    'recycle': 500,
+    'timeout': 90,             # 90 seg por envío de email + PDF
+    'compress': True,
+    'save_limit': 100,         # Balance perfecto
+    'queue_limit': 500,
+    'cpu_affinity': 1,
+    'retry': 60,               # Reintentar emails fallidos
+    'max_attempts': 2,         # Máximo 2 intentos
+    'ack_failures': True,
+    'label': 'Django Q',
+    'redis': {
+        'host': os.getenv('REDIS_HOST', 'redis'),
+        'port': int(os.getenv('REDIS_PORT', 6379)),
+        'db': int(os.getenv('REDIS_DB', 0)),
+        'password': os.getenv('REDIS_PASSWORD'),  # En producción usar password
+    }
+}
+"""
 # AWS S3
 AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")

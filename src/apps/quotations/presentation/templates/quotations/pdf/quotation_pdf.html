@@ -1,0 +1,52 @@
+<!-- quotations/presentation/templates/quotations/pdf/quotation_pdf.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cotización #{{ quotation.id }}</title>
+</head>
+<body>
+    <div class="header">
+        <h1>COTIZACIÓN</h1>
+        <p>{{ company_name }}</p>
+        <p>{{ company_address }}</p>
+        <p>{{ company_phone }}</p>
+    </div>
+
+    <div class="quotation-info">
+        <p><strong>N° Cotización:</strong> {{ quotation.id }}</p>
+        <p><strong>Fecha:</strong> {{ quotation.created|date:"d/m/Y" }}</p>
+        <p><strong>Válida hasta:</strong> {{ quotation.expired|date:"d/m/Y" }}</p>
+        <p><strong>Cliente:</strong> {{ quotation.user.email }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.product_code }}</td>
+                <td>{{ item.product_description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ quotation.currency_code }} {{ item.unit_price }}</td>
+                <td>{{ quotation.currency_code }} {{ item.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total">
+        <p>Subtotal: {{ quotation.currency_code }} {{ quotation.subtotal }}</p>
+        <p>Total: {{ quotation.currency_code }} {{ quotation.total }}</p>
+    </div>
+</body>
+</html>

@@ -26,6 +26,14 @@ whitenoise = "^6.9.0"
 django-compressor = "^4.5.1"
 django-cors-headers = "^4.7.0"
 django-tailwind = "^4.2.0"
+twilio = "^9.8.7"
+django-phonenumber-field = "^8.3.0"
+phonenumberslite = "^9.0.19"
+django-q2 = "^1.8.0"
+django-anymail = {extras = ["amazon-ses"], version = "^13.1"}
+weasyprint = "^66.0"
+redis = "^7.1.0"
+croniter = "^6.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

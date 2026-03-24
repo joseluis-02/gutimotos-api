@@ -43,8 +43,15 @@ class MotorcycleFile(models.Model):
         help_text='Color del tipo de la motocicleta',
         verbose_name='Color',
     )
+    is_active = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name='Activo',
+        help_text='Indica si el archivo está activo'
+    )
     # Manager
     objects = MotorcycleFileManager()
+    all_objects = models.Manager()
     # Class Meta
     class Meta:
         verbose_name = 'Archivo de motocicleta'

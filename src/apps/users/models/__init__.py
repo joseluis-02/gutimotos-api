@@ -1,9 +1,13 @@
 # Models
 from .user import User
 from .user_profile import UserProfile
+from .user_whatsapp import UserWhatsApp
+from apps.users.infrastructure.persistence.models.otp import OTP
 
-# Exponer
+# Export
 __all__ = [
-    'User',
-    'UserProfile'
+    User,
+    UserProfile,
+    UserWhatsApp,
+    OTP
 ]

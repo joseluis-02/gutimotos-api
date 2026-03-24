@@ -35,7 +35,12 @@ THIRD_PARTY_APPS = (
     "django_htmx",
     # Tailwind CSS
     'tailwind',
-    'theme',  # Esta será la app donde estará tu configuración Tailwind
+    # Tailwind
+    'theme',
+    #Django-Q2
+    'django_q',
+    # Enymail
+    'anymail',
 )
 # Aplicaciones locales o creados por ti
 LOCAL_APPS = (
@@ -44,14 +49,19 @@ LOCAL_APPS = (
     'apps.persons',
     'apps.categories',
     'apps.measures',
-    #'apps.prices',
     'apps.products',
     'apps.motorcycles',
     'apps.users',
+    'apps.quotations',
 )
 
 # Definición general de aplicaciones
 INSTALLED_APPS = DJANGO_APPS+THIRD_PARTY_APPS+LOCAL_APPS
+
+# Configurar migraciones en infrastructure/
+MIGRATION_MODULES = {
+    'quotations': 'apps.quotations.infrastructure.persistence.migrations',
+}
 
 # Middlewares del proyecto
 MIDDLEWARE = [
@@ -87,7 +97,10 @@ TAILWIND_APP_NAME = 'theme'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Plantillas globales
+        'DIRS': [
+            BASE_DIR / 'templates',  # Templates globales
+            BASE_DIR / 'apps/quotations/presentation/templates',
+        ],
         'APP_DIRS': True, # Habilita la búsqueda de templates dentro de las apps
         'OPTIONS': {
             'context_processors': [
