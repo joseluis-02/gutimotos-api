@@ -110,7 +110,7 @@ STORAGES = {
 }
 # WhiteNoise para STATICFILES
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = '/var/www/gutimotos/dev/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
