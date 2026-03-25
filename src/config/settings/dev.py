@@ -21,7 +21,7 @@ def get_env_variable(secret_name, secrets=secret):
 SECRET_KEY = get_env_variable('SECRET_KEY')
 
 # Modo de depuración
-DEBUG = True
+DEBUG = False
 
 # Hosts
 ALLOWED_HOSTS = [
