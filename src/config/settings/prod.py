@@ -33,7 +33,7 @@ if external_hosts:
     ALLOWED_HOSTS += external_hosts
 
 # Obtener la lista de dominios desde secret.json
-FRONTEND_DOMAINS = get_env_variable("FRONTEND_DOMAIN")
+FRONTEND_DOMAINS = get_env_variable("FRONTEND_DOMAINS")
 # Validar que siempre sea lista, incluso si está vacía
 if not FRONTEND_DOMAINS:
     FRONTEND_DOMAINS = []
@@ -51,30 +51,33 @@ DATABASES = {
         'PASSWORD': get_env_variable('DB_PASSWORD'),
         'HOST': get_env_variable('DB_HOST'),
         'PORT': get_env_variable('DB_PORT'),
+        'OPTIONS': {
+            'sslmode': 'require',
+            'channel_binding': 'require',
+        },
     }
 }
-"""
+
 Q_CLUSTER = {
     'name': 'gutimotos',
-    'workers': 2,              # Suficiente para tus tareas actuales
+    'workers': min(4, os.cpu_count()),
     'recycle': 500,
-    'timeout': 90,             # 90 seg por envío de email + PDF
+    'timeout': 90,
+    'retry': 120,
+    'max_attempts': 3,
     'compress': True,
-    'save_limit': 100,         # Balance perfecto
-    'queue_limit': 500,
-    'cpu_affinity': 1,
-    'retry': 60,               # Reintentar emails fallidos
-    'max_attempts': 2,         # Máximo 2 intentos
+    'save_limit': 100,
+    'queue_limit': 200,
     'ack_failures': True,
     'label': 'Django Q',
     'redis': {
-        'host': os.getenv('REDIS_HOST', 'redis'),
+        'host': os.getenv('REDIS_HOST', '127.0.0.1'),
         'port': int(os.getenv('REDIS_PORT', 6379)),
         'db': int(os.getenv('REDIS_DB', 0)),
-        'password': os.getenv('REDIS_PASSWORD'),  # En producción usar password
+        'password': os.getenv('REDIS_PASSWORD'),
     }
 }
-"""
+
 # AWS S3
 AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
