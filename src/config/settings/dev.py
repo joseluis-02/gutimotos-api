@@ -148,6 +148,8 @@ EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
 ANYMAIL = {
     "AMAZON_SES_CLIENT_PARAMS": {
         "region_name": get_env_variable("AWS_SES_REGION_NAME"),
+        "aws_access_key_id": get_env_variable("AWS_ACCESS_KEY_ID"),
+        "aws_secret_access_key": get_env_variable("AWS_SECRET_ACCESS_KEY"),
     }
 }
 # Opcional: valores por defecto de Django
