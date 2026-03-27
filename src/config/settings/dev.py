@@ -61,14 +61,14 @@ DATABASES = {
 
 Q_CLUSTER = {
     'name': 'gutimotos',
-    'workers': min(4, os.cpu_count()),
-    'recycle': 500,
-    'timeout': 90,
-    'retry': 120,
+    'workers': 1,
+    'recycle': 300,
+    'timeout': 60,
+    'retry': 90,
     'max_attempts': 3,
     'compress': True,
-    'save_limit': 100,
-    'queue_limit': 200,
+    'save_limit': 50,
+    'queue_limit': 100,
     'ack_failures': True,
     'label': 'Django Q',
     'redis': {
@@ -76,6 +76,7 @@ Q_CLUSTER = {
         'port': int(get_env_variable('REDIS_PORT')),
         'db': int(get_env_variable('REDIS_DB')),
         'password': get_env_variable('REDIS_PASSWORD'),
+        'socket_timeout': 5,
     }
 }
 
