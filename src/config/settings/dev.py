@@ -72,10 +72,10 @@ Q_CLUSTER = {
     'ack_failures': True,
     'label': 'Django Q',
     'redis': {
-        'host': os.getenv('REDIS_HOST', '127.0.0.1'),
-        'port': int(os.getenv('REDIS_PORT', 6379)),
-        'db': int(os.getenv('REDIS_DB', 0)),
-        'password': os.getenv('REDIS_PASSWORD'),
+        'host': get_env_variable('REDIS_HOST'),
+        'port': int(get_env_variable('REDIS_PORT')),
+        'db': int(get_env_variable('REDIS_DB')),
+        'password': get_env_variable('REDIS_PASSWORD'),
     }
 }
 
