@@ -143,6 +143,17 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
 }
 
+EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+# Configuración SES
+ANYMAIL = {
+    "AMAZON_SES_CLIENT_PARAMS": {
+        "region_name": get_env_variable("AWS_SES_REGION_NAME"),
+    }
+}
+# Opcional: valores por defecto de Django
+DEFAULT_FROM_EMAIL = get_env_variable("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = get_env_variable("SERVER_EMAIL")
+
 # Idioma de Bolivia
 LANGUAGE_CODE = 'es-BO'
 
