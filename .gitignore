@@ -47,5 +47,5 @@ Thumbs.db
 # --- Archivos de despliegue si NO quieres subirlos ---
 
 # --- Archivos media/static si los manejas en S3/CDN ---
-media/
+src/media
 staticfiles/
