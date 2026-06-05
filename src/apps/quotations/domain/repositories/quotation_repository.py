@@ -36,7 +36,7 @@ class ICurrencyRepository(ABC):
         """Busca una moneda activa por su código"""
         pass
 
-
+# Quotation
 class IQuotationRepository(ABC):
     """Interfaz para el repositorio de cotizaciones"""
     
@@ -51,4 +51,13 @@ class IQuotationRepository(ABC):
     @abstractmethod
     def delete_items(self, quotation):
         """Elimina todos los items de una cotización"""
+        pass
+    @abstractmethod
+    def find_by_user(self, user_id: UUID, page: int) -> dict:
+        """Lista cotizaciones de un usuario — 10 registros por página"""
+        pass
+ 
+    @abstractmethod
+    def find_items_by_quotation(self, quotation_id: UUID, user_id: UUID, page: int) -> dict:
+        """Items paginados de una cotización — 50 registros por página"""
         pass

@@ -116,3 +116,57 @@ class UpdateQuotationItemsRequestSerializer(serializers.Serializer):
         if len(product_codes) != len(set(product_codes)):
             raise serializers.ValidationError("Productos duplicados")
         return value
+    
+# Lista de cotizaciones
+class QuotationSummarySerializer(serializers.Serializer):
+    id            = serializers.UUIDField()
+    status        = serializers.CharField()
+    status_label  = serializers.SerializerMethodField()
+    currency_code = serializers.CharField()
+    total         = serializers.DecimalField(max_digits=12, decimal_places=2)
+    created       = serializers.DateTimeField()
+    expired       = serializers.DateTimeField()
+ 
+    def get_status_label(self, obj):
+        return QuotationStatus(obj.status).label
+ 
+ 
+class QuotationListResponseSerializer(serializers.Serializer):
+    results      = QuotationSummarySerializer(many=True)
+    total_count  = serializers.IntegerField()
+    total_pages  = serializers.IntegerField()
+    current_page = serializers.IntegerField()
+    has_next     = serializers.BooleanField()
+    has_previous = serializers.BooleanField()
+ 
+
+# Detalle de items
+class QuotationItemDetailSerializer(serializers.Serializer):
+    product_code        = serializers.CharField(source='product.code')
+    product_description = serializers.CharField(source='product.description')
+    quantity            = serializers.IntegerField()
+    unit_price          = serializers.DecimalField(max_digits=12, decimal_places=2)
+    subtotal            = serializers.DecimalField(max_digits=12, decimal_places=2)
+ 
+ 
+class QuotationHeaderSerializer(serializers.Serializer):
+    id            = serializers.UUIDField()
+    status        = serializers.CharField()
+    status_label  = serializers.SerializerMethodField()
+    currency_code = serializers.CharField()
+    subtotal      = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total         = serializers.DecimalField(max_digits=12, decimal_places=2)
+ 
+    def get_status_label(self, obj):
+        return QuotationStatus(obj.status).label
+ 
+ 
+class QuotationItemsResponseSerializer(serializers.Serializer):
+    quotation    = QuotationHeaderSerializer()
+    items        = QuotationItemDetailSerializer(many=True)
+    total_count  = serializers.IntegerField()
+    total_pages  = serializers.IntegerField()
+    current_page = serializers.IntegerField()
+    has_next     = serializers.BooleanField()
+    has_previous = serializers.BooleanField()
+ 

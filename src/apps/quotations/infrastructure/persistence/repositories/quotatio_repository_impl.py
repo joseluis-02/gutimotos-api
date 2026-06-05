@@ -1,8 +1,12 @@
-# quotations/infrastructure/persistence/repositories.py
-
+# Python
 from typing import Optional
 from decimal import Decimal
 from uuid import UUID
+# Django
+from django.core.paginator import Paginator
+
+PAGE_SIZE_LIST  = 10   # cotizaciones por página
+PAGE_SIZE_ITEMS = 10   # items por página
 
 
 class DjangoProductRepository:
@@ -78,3 +82,67 @@ class DjangoQuotationRepository:
     def delete_items(self, quotation):
         """Elimina todos los items de una cotización"""
         quotation.items.all().delete()
+        
+    # Lista de cotizaciones del usuario
+    def find_by_user(self, user_id: UUID, page: int) -> dict:
+        from apps.quotations.infrastructure.persistence.models.quotation import Quotation
+ 
+        qs = (
+            Quotation.objects
+            .filter(user_id=user_id)
+            .only('id', 'status', 'currency_code', 'total', 'created', 'expired')
+            .order_by('-created')
+        )
+ 
+        paginator = Paginator(qs, PAGE_SIZE_LIST)
+        page_obj  = paginator.get_page(page)
+ 
+        return {
+            'results':      list(page_obj.object_list),
+            'total_count':  paginator.count,
+            'total_pages':  paginator.num_pages,
+            'current_page': page_obj.number,
+            'has_next':     page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+        }
+    
+    # Items paginados de una cotización
+    def find_items_by_quotation(self, quotation_id: UUID, user_id: UUID, page: int) -> dict:
+        from apps.quotations.infrastructure.persistence.models.quotation import Quotation
+        from apps.quotations.infrastructure.persistence.models.quotation_item import QuotationItem
+ 
+        # 1. Valida propiedad y trae solo cabecera
+        try:
+            quotation = (
+                Quotation.objects
+                .only('id', 'status', 'currency_code', 'subtotal', 'total')
+                .get(id=quotation_id, user_id=user_id)
+            )
+        except Quotation.DoesNotExist:
+            return None
+ 
+        # 2. Items con JOIN a producto — sin N+1
+        items_qs = (
+            QuotationItem.objects
+            .filter(quotation_id=quotation_id)
+            .select_related('product')
+            .only(
+                'quantity', 'unit_price', 'subtotal',
+                'product__code', 'product__description',
+            )
+            .order_by('product__code')
+        )
+ 
+        paginator = Paginator(items_qs, PAGE_SIZE_ITEMS)
+        page_obj  = paginator.get_page(page)
+ 
+        return {
+            'quotation':    quotation,
+            'items':        list(page_obj.object_list),
+            'total_count':  paginator.count,
+            'total_pages':  paginator.num_pages,
+            'current_page': page_obj.number,
+            'has_next':     page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+        }
+ 

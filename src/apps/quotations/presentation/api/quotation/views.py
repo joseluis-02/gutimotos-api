@@ -11,6 +11,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.quotations.application.commands.create_quotation_command import CreateQuotationCommand
 from apps.quotations.application.commands.update_quotation_status_command import UpdateQuotationStatusCommand
 from apps.quotations.application.commands.update_quotation_items_command import UpdateQuotationItemsCommand
+from apps.quotations.application.queries.list_quotations_query import (
+    ListQuotationsQuery,
+    ListQuotationsRequestDTO,
+)
+from apps.quotations.application.queries.get_quotation_items_query import (
+    GetQuotationItemsQuery,
+    GetQuotationItemsRequestDTO,
+)
 from apps.quotations.application.dto.quotation_dto import (
     CreateQuotationRequestDTO,
     QuotationItemRequestDTO,
@@ -43,10 +51,12 @@ from apps.quotations.presentation.api.quotation.serializers import (
     QuotationResponseSerializer,
     UpdateQuotationStatusRequestSerializer,
     UpdateQuotationStatusResponseSerializer,
-    UpdateQuotationItemsRequestSerializer
+    UpdateQuotationItemsRequestSerializer,
+    QuotationListResponseSerializer,
+    QuotationItemsResponseSerializer
 )
 
-
+logger = logging.getLogger(__name__)
 
 class CreateQuotationAPIView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -396,7 +406,76 @@ class UpdateQuotationItemsAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+class ListQuotationsAPIView(APIView):
+    """
+    GET /api/quotations/?page=1
+    Devuelve 10 cotizaciones por página ordenadas por fecha descendente.
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes     = [IsAuthenticated]
+ 
+    def get(self, request):
+        try:
+            page = int(request.query_params.get('page', 1))
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'El parámetro page debe ser un número entero'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+ 
+        dto    = ListQuotationsRequestDTO(user_id=request.user.id, page=page)
+        result = ListQuotationsQuery(DjangoQuotationRepository()).execute(dto)
+ 
+        return Response(
+            {'data': QuotationListResponseSerializer(result).data},
+            status=status.HTTP_200_OK,
+        )
+
+class QuotationItemsAPIView(APIView):
+    """
+    GET /api/quotations/{quotation_id}/items/?page=1
+    Devuelve cabecera de la cotización + 50 items por página ordenados por código de producto.
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes     = [IsAuthenticated]
+ 
+    def get(self, request, quotation_id):
+        try:
+            page = int(request.query_params.get('page', 1))
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'El parámetro page debe ser un número entero'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+ 
+        try:
+            dto    = GetQuotationItemsRequestDTO(
+                quotation_id=quotation_id,
+                user_id=request.user.id,
+                page=page,
+            )
+            result = GetQuotationItemsQuery(DjangoQuotationRepository()).execute(dto)
+ 
+        except QuotationNotFoundException as e:
+            return Response(
+                {'error': 'Cotización no encontrada', 'details': str(e)},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception:
+            logger.exception("Error al obtener items de cotización")
+            return Response(
+                {'error': 'Error interno del servidor'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+ 
+        return Response(
+            {'data': QuotationItemsResponseSerializer(result).data},
+            status=status.HTTP_200_OK,
+        )
+
 # Alias para mantener compatibilidad con urls.py que use nombre de función
 create_quotation = CreateQuotationAPIView.as_view()
 patch_quotation_status = PatchQuotationStatusAPIView.as_view()
 update_quotation_items = UpdateQuotationItemsAPIView.as_view()
+list_quotation = ListQuotationsAPIView.as_view()
+get_quotation_items = QuotationItemsAPIView.as_view()
