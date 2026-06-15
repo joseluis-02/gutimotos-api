@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: gutimotos-api
-    env: python
-    buildCommand: "./build.sh"  # Se ejecutará el script de construcción
-    startCommand: "PYTHONPATH=src poetry run gunicorn src.config.wsgi:application --workers 1 --preload"

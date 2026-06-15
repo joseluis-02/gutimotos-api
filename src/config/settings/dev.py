@@ -7,8 +7,14 @@ from .base import *
 import firebase_admin
 from firebase_admin import credentials
 
+APP_DIR = Path(BASE_DIR)
+
+PROJECT_ROOT = APP_DIR.parent.parent
+
+SECRETS_DIR = PROJECT_ROOT / "secrets"
+
 # Leer el archivo de secret de variables de entorno
-with open(BASE_DIR / 'secrets' / 'secret.json') as f:
+with open(SECRETS_DIR / 'secret.json') as f:
     secret = json.loads(f.read())
 
 def get_env_variable(secret_name, secrets=secret):
@@ -25,8 +31,7 @@ DEBUG = False
 
 # Hosts
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
+    "*",
 ]
 external_hosts = get_env_variable('ALLOWED_HOSTS')
 if external_hosts:
@@ -110,8 +115,13 @@ STORAGES = {
     },
 }
 # WhiteNoise para STATICFILES
-STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/gutimotos/dev/static/'
+#STATIC_URL = '/static/'
+#STATIC_ROOT = '/var/www/gutimotos/dev/static/'
+#STATICFILES_DIRS = [
+#   BASE_DIR / "static",
+#]
+STATIC_URL = "/static/"
+STATIC_ROOT = PROJECT_ROOT / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
@@ -126,7 +136,7 @@ REST_FRAMEWORK = {
 }
 
 # Configuración de Firebase
-cred = credentials.Certificate(BASE_DIR / 'secrets' / 'firebase-admin-key.json')
+cred = credentials.Certificate(SECRETS_DIR / 'firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
 
 # SimpleJWT para producción

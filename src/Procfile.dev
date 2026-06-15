@@ -1,3 +1,0 @@
-web: python src/manage.py runserver 0.0.0.0:8000
-tailwind: python src/manage.py tailwind start
-qcluster: python src/manage.py qcluster
