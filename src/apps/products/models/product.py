@@ -95,7 +95,7 @@ class Product(TimeStampedModel):
             models.Index(fields=['created']),
         ]
     def __str__(self):
-        return f'{self.code}'
+        return f"{self.code} - {self.description[:50]}"
 
     def get_photo_url(self):
         obj = self.p_photos.first()

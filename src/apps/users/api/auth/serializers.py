@@ -4,7 +4,6 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
-
 # ---------------------------------------------------
 # Base: utilidades comunes para validación de tokens
 # ---------------------------------------------------
@@ -68,3 +67,4 @@ class AuthRefreshTokenSerializer(TokenValidatorMixin, serializers.Serializer):
 
     def validate_refresh_token(self, value: str) -> str:
         return self.validate_refresh_token_value(value)
+

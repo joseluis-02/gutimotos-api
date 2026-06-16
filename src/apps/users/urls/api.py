@@ -6,4 +6,5 @@ app_name = 'users_api'
 urlpatterns = [
     # Auth 
     path("", include("apps.users.api.auth.urls", namespace="api_auth")),
+    #path("", include("apps.users.api.user_whatsapp.urls", namespace="api_user_whatsapp")),
 ]

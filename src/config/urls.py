@@ -16,6 +16,10 @@ urlpatterns = [
     path("products/", include("apps.products.urls", namespace="products")),
     # App motorcycles
     path("motorcycles/", include("apps.motorcycles.urls", namespace="motorcycles")),
+    
+    # v2
+    path("quotations/", include("apps.quotations.presentation.api.quotation.urls", namespace="quotation")),
+    path("users/", include("apps.users.presentation.api.auth.urls", namespace="auth")),
 ]
 
 if settings.DEBUG:

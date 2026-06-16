@@ -1,0 +1,162 @@
+<!-- quotations/presentation/templates/quotations/email/quotation_expiration_warning.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización por expirar</title>
+</head>
+
+<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#f5f5f5;">
+    <tr>
+        <td align="center" style="padding:16px 8px;">
+
+            <!-- WRAPPER -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#ffffff;border-radius:10px;overflow:hidden;">
+
+                <!-- HEADER -->
+                <tr>
+                    <td align="center" style="background-color:#dc2626;padding:32px 20px;">
+                        <p style="margin:0;color:#ffffff;font-size:24px;font-weight:700;line-height:1.3;">
+                            {% if is_single %}
+                                Tu cotización expira pronto
+                            {% else %}
+                                Tus cotizaciones expiran pronto
+                            {% endif %}
+                        </p>
+                        <p style="margin:8px 0 0;color:#fde2e2;font-size:13px;">
+                            Revisa antes de que se cierre automáticamente
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- BODY -->
+                <tr>
+                    <td style="padding:24px 20px;color:#374151;font-size:14px;line-height:1.6;">
+                        <p style="margin-top:0;">
+                            Por favor confirma o cancela {% if is_single %}la cotización{% else %}las cotizaciones{% endif %}
+                            antes de la fecha límite.
+                        </p>
+
+                        <!-- QUOTATIONS -->
+                        {% for quotation in quotations %}
+                        <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                               style="margin-bottom:16px;background-color:#fafafa;border-radius:8px;border-left:4px solid #dc2626;">
+                            <tr>
+                                <td style="padding:16px;">
+
+                                    <p style="margin:0 0 8px;font-size:11px;color:#9ca3af;font-weight:600;">
+                                        Cotización #{{ quotation.id|slice:":8" }}
+                                    </p>
+
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <!-- TOTAL -->
+                                            <td valign="top" style="padding-bottom:12px;">
+                                                <p style="margin:0;font-size:11px;color:#6b7280;text-transform:uppercase;">
+                                                    Total
+                                                </p>
+                                                <p style="margin:4px 0 0;font-size:22px;font-weight:700;color:#111827;">
+                                                    {{ quotation.currency_code }} {{ quotation.total }}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- EXPIRATION -->
+                                            <td>
+                                                <table cellpadding="0" cellspacing="0" role="presentation">
+                                                    <tr>
+                                                        <td style="background-color:#dc2626;border-radius:6px;padding:8px 12px;">
+                                                            <p style="margin:0;color:#ffffff;font-size:12px;font-weight:600;text-align:center;">
+                                                                Expira<br>
+                                                                {{ quotation.expired|date:"d/m/Y H:i" }}
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+                        </table>
+                        {% endfor %}
+
+                        <!-- CTA -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+                            <tr>
+                                <td align="center">
+                                    <a href="{{ web_url }}"
+                                       style="display:inline-block;margin-bottom:8px;padding:10px 18px;
+                                              background-color:#25D366;color:#ffffff;text-decoration:none;
+                                              border-radius:6px;font-size:13px;font-weight:600;">
+                                        {% if is_single %}Ver cotización{% else %}Ver cotizaciones{% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- WARNING -->
+                        <table width="100%" cellpadding="0" cellspacing="0"
+                               style="background-color:#fff3cd;border:1px solid #ffc107;border-radius:6px;">
+                            <tr>
+                                <td style="padding:14px;">
+                                    <p style="margin:0;font-size:12px;color:#856404;">
+                                        <strong>Importante:</strong>
+                                        Si no realizas ninguna acción,
+                                        {% if is_single %}la cotización se marcará{% else %}las cotizaciones se marcarán{% endif %}
+                                        como expiradas automáticamente.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- CONTACT -->
+                        <table width="100%" cellpadding="0" cellspacing="0"
+                               style="margin-top:24px;background-color:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;">
+                            <tr>
+                                <td style="padding:16px;">
+                                    <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#111827;">
+                                        ¿Necesitas ayuda?
+                                    </p>
+
+                                    <a href="{{ whatsapp_link }}"
+                                       style="display:inline-block;margin-bottom:8px;padding:10px 18px;
+                                              background-color:#25D366;color:#ffffff;text-decoration:none;
+                                              border-radius:6px;font-size:13px;font-weight:600;">
+                                        WhatsApp
+                                    </a>
+
+                                    <p style="margin:8px 0 0;font-size:12px;color:#6b7280;">
+                                        Teléfono:
+                                        <a href="tel:{{ support_phone }}"
+                                           style="color:#dc2626;text-decoration:none;font-weight:600;">
+                                            {{ support_phone }}
+                                        </a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+
+            <!-- FOOTER -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin-top:12px;">
+                <tr>
+                    <td align="center">
+                        <p style="margin:0;font-size:11px;color:#9ca3af;">
+                            Correo automático de {{ company_name }} · No respondas este mensaje
+                        </p>
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -7,21 +7,37 @@ from firebase_admin import credentials, auth
 from decouple import config
 # Base configuración base
 from .base import *
+
+# Leer secrets
+with open(BASE_DIR / "secrets" / "secret.json") as f:
+    secrets = json.load(f)
+
+def get_env_variable(secret_name):
+    try:
+        value = secrets[secret_name]
+        if isinstance(value, str):
+            return value.strip()  # elimina espacios invisibles
+        return value
+    except KeyError:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured(f"La variable de entorno {secret_name} no está configurada")
+
 # Modo de depuración del proyecto
 DEBUG = True
-SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+SECRET_KEY = get_env_variable('SECRET_KEY')
+ALLOWED_HOSTS = ["127.0.0.1","*"]
 # Base de datos
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': get_env_variable('DB_ENGINE'),
+        'NAME': get_env_variable('DB_NAME'),
+        'USER': get_env_variable('DB_USER'),
+        'PASSWORD': get_env_variable('DB_PASSWORD'),
+        'HOST': get_env_variable('DB_HOST'),
+        'PORT': get_env_variable('DB_PORT'),
     }
 }
+
 # Apps de terceros
 THIRD_PARTY_APPS_LOCAL = (
     'django_browser_reload',
@@ -29,18 +45,22 @@ THIRD_PARTY_APPS_LOCAL = (
 INSTALLED_APPS = INSTALLED_APPS + THIRD_PARTY_APPS_LOCAL
 # Middleware solo para desarrollo
 MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
-
-# Configuración de CORS y CSRF para desarrollo
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Frontend React local
-    "http://127.0.0.1:8000",
-]
+# Configuración de CORS
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+# En desarrollo, permite todo
 CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://*.ngrok-free.app",
 ]
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
+
 # Configuración de archivos estáticos del proyecto
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
@@ -79,32 +99,52 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
 }
 
-# Configuración de CORS
-# En desarrollo, permite todo
-CORS_ALLOW_ALL_ORIGINS = DEBUG
+# Configuración de Twilio
+TWILIO_ACCOUNT_SID=get_env_variable('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN=get_env_variable('TWILIO_AUTH_TOKEN')
+TWILIO_WHATSAPP_NUMBER=get_env_variable('TWILIO_WHATSAPP_NUMBER')
 
-# En producción, especifica los dominios permitidos
-'''
-CORS_ALLOWED_ORIGINS = [
-    "https://tudominio.com",
-    "https://admin.tudominio.com",
-]
-'''
-# Solo en producción permite el uso de cookies, cabeceras de autorización, sesiones entre el frontend y el backend.
-# CORS_ALLOW_CREDENTIALS = True
 
-# Configuración de CSRF y cookies Solo en producción
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
+# PHONENUMBER
+PHONENUMBER_DEFAULT_REGION = None
+PHONENUMBER_DEFAULT_FORMAT = "E164"
 
-# Configuración de correo
+# CELERY
+
+# Configuración principal de Django Q
+Q_CLUSTER = {
+    'name': 'gutimotos-dev',
+    'workers': 2,              # Pocos workers para desarrollo
+    'recycle': 100,            # Reciclar más seguido
+    'timeout': 30,             # Timeout corto para detectar problemas
+    'compress': False,         # No comprimir (más fácil debug)
+    'save_limit': 50,          # Mantener menos registros
+    'queue_limit': 100,        # Cola pequeña
+    'cpu_affinity': 1,
+    'label': 'Django Q Dev',
+    'redis': {
+        'host': '127.0.0.1',
+        'port': 6379,
+        'db': 0,
+    }
+}
+
+EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+# Configuración SES
+ANYMAIL = {
+    "AMAZON_SES_CLIENT_PARAMS": {
+        "region_name": "sa-east-1",
+        # "aws_access_key_id": "TU_KEY",
+        # "aws_secret_access_key": "TU_SECRET",
+    }
+}
+# Opcional: valores por defecto de Django
+DEFAULT_FROM_EMAIL = get_env_variable("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = get_env_variable("SERVER_EMAIL")
 
 # Internationalization y configuracion de zona horario
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 LANGUAGE_CODE = 'es-BO'
-
 TIME_ZONE = 'America/La_Paz'
-
 USE_I18N = True
-
 USE_TZ = True

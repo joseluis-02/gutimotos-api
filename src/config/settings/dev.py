@@ -7,8 +7,14 @@ from .base import *
 import firebase_admin
 from firebase_admin import credentials
 
-# SECURITY WARNING: keep the secret key used in production secret!
-with open(BASE_DIR / 'secrets' / 'secret.json') as f:
+APP_DIR = Path(BASE_DIR)
+
+PROJECT_ROOT = APP_DIR.parent.parent
+
+SECRETS_DIR = PROJECT_ROOT / "secrets"
+
+# Leer el archivo de secret de variables de entorno
+with open(SECRETS_DIR / 'secret.json') as f:
     secret = json.loads(f.read())
 
 def get_env_variable(secret_name, secrets=secret):
@@ -20,14 +26,26 @@ def get_env_variable(secret_name, secrets=secret):
 # Secret key del proyecto
 SECRET_KEY = get_env_variable('SECRET_KEY')
 
-# Modo de despliegue en developer
+# Modo de depuración
 DEBUG = False
 
 # Hosts
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = [
+    "*",
+]
 external_hosts = get_env_variable('ALLOWED_HOSTS')
 if external_hosts:
     ALLOWED_HOSTS += external_hosts
+
+# Obtener la lista de dominios desde secret.json
+FRONTEND_DOMAINS = get_env_variable("FRONTEND_DOMAINS")
+# Validar que siempre sea lista, incluso si está vacía
+if not FRONTEND_DOMAINS:
+    FRONTEND_DOMAINS = []
+# CSRF y CORS
+CSRF_TRUSTED_ORIGINS = FRONTEND_DOMAINS
+CORS_ALLOWED_ORIGINS = FRONTEND_DOMAINS
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 DATABASES = {
@@ -38,85 +56,123 @@ DATABASES = {
         'PASSWORD': get_env_variable('DB_PASSWORD'),
         'HOST': get_env_variable('DB_HOST'),
         'PORT': get_env_variable('DB_PORT'),
+        'OPTIONS': {
+            'sslmode': 'require',
+            'channel_binding': 'require',
+            'connect_timeout': 10,
+        },
     }
 }
 
-# Configuración de archivos estáticos del proyecto
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Configura tus credenciales de AWS
-AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_STORAGE_BUCKET_NAME')
-# URL base para los archivos
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_CUSTOM_DOMAIN = False
-
-# URL base para los archivos
-STORAGES = {
-    # Media
-    "default": {
-        "BACKEND": "config.storages.media.MediaS3Boto3Storage",
-        #"BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    },
-    # CSS JS
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
+Q_CLUSTER = {
+    'name': 'gutimotos',
+    'workers': 1,
+    'recycle': 300,
+    'timeout': 60,
+    'retry': 90,
+    'max_attempts': 3,
+    'compress': True,
+    'save_limit': 50,
+    'queue_limit': 100,
+    'ack_failures': True,
+    'label': 'Django Q',
+    'redis': {
+        'host': get_env_variable('REDIS_HOST'),
+        'port': int(get_env_variable('REDIS_PORT')),
+        'db': int(get_env_variable('REDIS_DB')),
+        'password': get_env_variable('REDIS_PASSWORD'),
+        'socket_timeout': 5,
+    }
 }
 
-# Ajusta también las URLs para acceder a los archivos en S3:
-#STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-'''
-# Configuración de archivos media del proyecto
-MEDIA_URL = '/media/'  # URL para acceder a los archivos media
-MEDIA_ROOT = BASE_DIR / 'media'# Ruta donde se guardarán los archivos
-'''
+# AWS S3
+AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = get_env_variable("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = get_env_variable("AWS_S3_REGION_NAME")
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
-# Busca el path ruta en tu máquina puede variar la ruta
-#NPM_BIN_PATH = '/home/usuario/.nvm/versions/node/v22.12.0/bin/npm'
+AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = None
+AWS_S3_FILE_OVERWRITE = False
 
-#Configuracion de Compress
-#COMPRESS_ROOT = BASE_DIR / 'static'
-#COMPRESS_ENABLED = True
-#STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=31536000",
+}
+
+# Usamos el nuevo sistema de almacenamiento recomendado por Django 4.2+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "location": "media",
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "custom_domain": AWS_S3_CUSTOM_DOMAIN,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+# WhiteNoise para STATICFILES
+#STATIC_URL = '/static/'
+#STATIC_ROOT = '/var/www/gutimotos/dev/static/'
+#STATICFILES_DIRS = [
+#   BASE_DIR / "static",
+#]
+STATIC_URL = "/static/"
+STATIC_ROOT = PROJECT_ROOT / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# MEDIA
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
+# Para que DRF no convierta Decimal a float
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
+    'EXCEPTION_HANDLER': 'apps.core.exceptions.custom_exception_handler',
+}
 
 # Configuración de Firebase
-cred = credentials.Certificate(BASE_DIR / 'secrets' /'firebase-admin-key.json')
+cred = credentials.Certificate(SECRETS_DIR / 'firebase-admin-key.json')
 firebase_admin.initialize_app(cred)
-# Configuración de SimpleJWT
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=10),
-    # Este código revoca todos los tokens de un usuario
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    # Django actualiza el campo last_login del modelo User
-    'UPDATE_LAST_LOGIN': True,
-    
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-    'TOKEN_OBTAIN_SERIALIZER': 'users.api.auth.serializers.custom_token_obtain_pair.CustomTokenObtainPairSerializer',
-}
 
+# SimpleJWT para producción
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 # Para que DRF no convierta Decimal a float
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': True,  # predeterminado: True
 }
 
-# Configuración de CORS
-# En desarrollo, permite todo
-CORS_ALLOW_ALL_ORIGINS = DEBUG
+EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+# Configuración SES
+ANYMAIL = {
+    "AMAZON_SES_CLIENT_PARAMS": {
+        "region_name": get_env_variable("AWS_SES_REGION_NAME"),
+        "aws_access_key_id": get_env_variable("AWS_ACCESS_KEY_ID"),
+        "aws_secret_access_key": get_env_variable("AWS_SECRET_ACCESS_KEY"),
+    }
+}
+# Opcional: valores por defecto de Django
+DEFAULT_FROM_EMAIL = get_env_variable("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = get_env_variable("SERVER_EMAIL")
 
-# Internationalization y configuracion de zona horario
+# Idioma de Bolivia
 LANGUAGE_CODE = 'es-BO'
 
-TIME_ZONE = 'UTC'
+# Zona horaria exacta para Bolivia
+TIME_ZONE = 'America/La_Paz'
+USE_I18N = True      # Habilita la internacionalización
+USE_L10N = True      # (opcional, si usas localización por formatos regionales)
+USE_TZ = True        # Usa zonas horarias con reconocimiento de tiempo universal (UTC)
 
-USE_I18N = True
-
-USE_TZ = True

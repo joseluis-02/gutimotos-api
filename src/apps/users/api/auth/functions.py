@@ -55,7 +55,7 @@ def set_jwt_cookies(response, access_token, refresh_token, request=None, domain=
     """
     domain = domain or getattr(settings, "FRONTEND_DOMAIN", "")
 
-    if settings.DEBUG or not domain:
+    if not settings.DEBUG:
         return response
 
     is_local = domain.startswith("http://localhost") or domain.startswith("http://127.0.0.1")

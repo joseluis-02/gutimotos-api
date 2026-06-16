@@ -9,6 +9,7 @@ class MotorcycleFileAdmin(admin.ModelAdmin):
         'brand_name',
         'motorcycle_type_path',
         'color_name',
+        'is_active'
     ]
     def brand_name(self, obj):
         return obj.brand.name

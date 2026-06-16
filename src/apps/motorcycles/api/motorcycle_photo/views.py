@@ -44,7 +44,9 @@ class MotorcyclePhotoReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
         return MotorcyclePhotoSerializer
 
     def get_queryset(self):
-        qs = MotorcyclePhoto.objects.all().select_related(
+        qs = MotorcyclePhoto.objects.filter(
+                motorcycle_file__is_active=True
+            ).select_related(
             'motorcycle_file__brand',
             'motorcycle_file__motorcycle_type',
             'motorcycle_file__color',

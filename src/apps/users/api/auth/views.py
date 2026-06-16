@@ -181,3 +181,4 @@ class TokenCleanupAPIView(APIView):
                 "blacklisted_deleted": deleted_blacklisted
             }
         }, status=status.HTTP_200_OK)
+
