@@ -123,6 +123,7 @@ class QuotationSummarySerializer(serializers.Serializer):
     status        = serializers.CharField()
     status_label  = serializers.SerializerMethodField()
     currency_code = serializers.CharField()
+    subtotal      = serializers.DecimalField(max_digits=12, decimal_places=2)
     total         = serializers.DecimalField(max_digits=12, decimal_places=2)
     created       = serializers.DateTimeField()
     expired       = serializers.DateTimeField()
@@ -144,9 +145,25 @@ class QuotationListResponseSerializer(serializers.Serializer):
 class QuotationItemDetailSerializer(serializers.Serializer):
     product_code        = serializers.CharField(source='product.code')
     product_description = serializers.CharField(source='product.description')
+    photo = serializers.SerializerMethodField()
     quantity            = serializers.IntegerField()
     unit_price          = serializers.DecimalField(max_digits=12, decimal_places=2)
     subtotal            = serializers.DecimalField(max_digits=12, decimal_places=2)
+    def get_photo(self, obj):
+        request = self.context.get('request')
+
+        product_photo = obj.product.p_photos.first()
+
+        if product_photo and product_photo.photo:
+            return product_photo.photo.url
+
+        # Fallback
+        default_url = '/static/images/no-image.svg'
+
+        if request:
+            return request.build_absolute_uri(default_url)
+
+        return default_url
  
  
 class QuotationHeaderSerializer(serializers.Serializer):
@@ -162,7 +179,8 @@ class QuotationHeaderSerializer(serializers.Serializer):
  
  
 class QuotationItemsResponseSerializer(serializers.Serializer):
-    quotation    = QuotationHeaderSerializer()
+    #quotation    = QuotationHeaderSerializer()
+    quotation    = QuotationSummarySerializer()
     items        = QuotationItemDetailSerializer(many=True)
     total_count  = serializers.IntegerField()
     total_pages  = serializers.IntegerField()

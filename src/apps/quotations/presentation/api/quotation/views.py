@@ -469,7 +469,7 @@ class QuotationItemsAPIView(APIView):
             )
  
         return Response(
-            {'data': QuotationItemsResponseSerializer(result).data},
+            {'data': QuotationItemsResponseSerializer(result, context={'request': request}).data},
             status=status.HTTP_200_OK,
         )
 

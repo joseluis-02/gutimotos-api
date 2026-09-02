@@ -90,7 +90,7 @@ class DjangoQuotationRepository:
         qs = (
             Quotation.objects
             .filter(user_id=user_id)
-            .only('id', 'status', 'currency_code', 'total', 'created', 'expired')
+            .only('id', 'status', 'currency_code', 'subtotal', 'total', 'created', 'expired')
             .order_by('-created')
         )
  
@@ -115,7 +115,8 @@ class DjangoQuotationRepository:
         try:
             quotation = (
                 Quotation.objects
-                .only('id', 'status', 'currency_code', 'subtotal', 'total')
+                #.only('id', 'status', 'currency_code', 'subtotal', 'total')
+                .only('id', 'status', 'currency_code', 'subtotal', 'total', 'created', 'expired')
                 .get(id=quotation_id, user_id=user_id)
             )
         except Quotation.DoesNotExist:
